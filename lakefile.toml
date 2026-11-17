@@ -1,7 +1,7 @@
 # Lean 4's type theory, as Lean4Lean formalizes it, interpreted in Con-Leche's set theory.
 # Both dependencies are sibling checkouts, required by path: the README says how to prepare them.
 name = "lean4-zfc-embed"
-defaultTargets = ["Lean4Zfc"]
+defaultTargets = ["Lean4Zfc", "Lean4ZfcTest"]
 
 # Lean4Lean with its theory built at Lean v4.35.0 (upstream plus patches/lean4lean-v4.35.0.patch).
 [[require]]
@@ -15,4 +15,10 @@ path = "../lean4-zfc-sources/con-leche"
 [[lean_lib]]
 name = "Lean4Zfc"
 # Con-Leche declares itself designed for the module system and these files are classic ones.
+allowNonModules = true
+
+# Checks of the library's statements that fail the build: the axioms each theorem depends on.
+[[lean_lib]]
+name = "Lean4ZfcTest"
+globs = ["Lean4ZfcTest.+"]
 allowNonModules = true
