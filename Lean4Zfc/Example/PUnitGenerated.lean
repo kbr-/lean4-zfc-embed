@@ -7,8 +7,8 @@ The generator run on the example's export.
 Nothing here is written by hand about the environment: `generate cenv` is computed from what the
 checker returned. `generated_names` shows the generator kept every constant of the checker's
 environment, the prelude's (`Eq`, `Nat`, `Quot`, their constructors and recursors) with the
-export's, and `generated_eqs` that it found the one equation the export states as a theorem. So
-`generated_f_defeq` derives `f ≡ PUnit.other` in the generated environment, and
+export's, and `generated_eqs` that it found the one equation that is the type of a constant of
+the export. So `generated_f_defeq` derives `f ≡ PUnit.other` in the generated environment, and
 `generated_env_consistent` is the consistency statement for it.
 -/
 

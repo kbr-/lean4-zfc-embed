@@ -12,8 +12,8 @@ so, by failing to type, is every later constant that mentions something left out
 
 `generate_certOrdered` proves the result certified against `cenv`, with no hypothesis, so
 `generated_consistent` needs only the checker's acceptance. The generated environment holds no
-equation the export does not state as a theorem: Con-Leche's model speaks of constants and of
-`Eq`, not of the checker's reduction rules.
+equation that is not the type of one of the checker's constants: Con-Leche's model speaks of
+constants and of `Eq`, not of the checker's reduction rules.
 -/
 
 namespace Lean4Zfc
