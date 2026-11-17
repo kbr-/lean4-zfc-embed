@@ -34,3 +34,17 @@ info: 'Lean4Zfc.Built.consistent' depends on axioms: [propext, Classical.choice,
 -/
 #guard_msgs in
 #print axioms Lean4Zfc.Built.consistent
+
+/-- info: 'Lean4Zfc.falseE_isType' depends on axioms: [propext] -/
+#guard_msgs in
+#print axioms Lean4Zfc.falseE_isType
+
+/-- info: 'Lean4Zfc.badEnv_proves_false' depends on axioms: [propext, Quot.sound] -/
+#guard_msgs in
+#print axioms Lean4Zfc.badEnv_proves_false
+
+/--
+info: 'Lean4Zfc.badEnv_no_model' depends on axioms: [propext, Classical.choice, Quot.sound]
+-/
+#guard_msgs in
+#print axioms Lean4Zfc.badEnv_no_model
