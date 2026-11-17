@@ -4,12 +4,12 @@ import Lean4Zfc.Infer
 A type inferencer that converts where the judgement's own rules justify it.
 
 `infer` types a term by the structural rules, and also a term whose binder domains or application
-heads have a type that is a sort or a function type only after unfolding constants and
-contracting redexes. Each step it takes is one rule of Lean4Lean's judgement applied to types the function
-has itself inferred and compared syntactically: a stored unfolding from the list `eqs` (`extra`),
-a contraction (`beta`), a step under an application (`appDF`), a chain of steps at one sort
-(`trans`), and the retyping of a term at a converted type (`defeqDF`). No inversion lemma and no
-unique typing is used.
+heads have a type that is a sort or a function type only after unfolding constants and contracting
+redexes. Each step it takes is one rule of Lean4Lean's judgement applied to types the function has
+itself inferred and compared syntactically: a stored unfolding from the list `eqs` (`extra`), a
+contraction (`beta`), a step under an application (`appDF`), a chain of steps at one sort (`trans`),
+and the retyping of a term at a converted type (`defeqDF`). No inversion lemma and no unique typing
+is used.
 
 Conversion calls inference on terms that are not subterms, so everything runs on fuel.
 `infer_sound` holds for every fuel: a result is a typing in the judgement, given that the

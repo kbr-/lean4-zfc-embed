@@ -18,7 +18,8 @@ for, or a level the parameter names `ps` don't cover. -/
 def blocker (ps : List ConLeche.Name) : ConLeche.Expr → Option String
   | .fvar _ _ => some "a free variable"
   | .letE _ _ _ => some "a let"
-  | .lit _ => some "a literal"
+  | .lit (.natVal n) => if n ≤ litBound then none else some s!"a Nat literal above {litBound}"
+  | .lit (.strVal _) => some "a string literal"
   | .proj _ _ _ => some "a projection"
   | .sort u => if (untrLevel ps u).isNone then some "a level outside its parameters" else none
   | .const _ us =>
@@ -28,9 +29,8 @@ def blocker (ps : List ConLeche.Name) : ConLeche.Expr → Option String
   | .forallE A B => (blocker ps A).orElse fun _ => blocker ps B
   | .bvar _ => none
 
-/-- Which of the generator's conditions the constant `ci` fails in the generated state `g`. For
-the first constant left out, `g` may be the final state: the constants before it were all kept,
-and its type mentions none after it. -/
+/-- Which of the generator's conditions the constant `ci` fails in the state `g` the generator
+reached just before it. -/
 def whyLeftOut (cenv : ConLeche.Env) (g : Generated) (ci : ConLeche.ConstantInfo) :
     String :=
   if cenv.find? ci.name ≠ some ci then "another constant bears its name"
@@ -51,7 +51,10 @@ def generatedReport (cenv : ConLeche.Env) : String :=
   let dropped := cenv.consts.reverse.filter (fun ci => !g.names.contains (untrName ci.name))
   let why := match dropped with
     | [] => ""
-    | ci :: _ => s!"\tthe first because {whyLeftOut cenv g ci}"
+    | ci :: _ =>
+      let before := (cenv.consts.reverse.takeWhile fun c => decide (c ≠ ci)).foldl (step cenv)
+        ⟨.empty, [], []⟩
+      s!"\tthe first because {whyLeftOut cenv before ci}"
   s!"constants {cenv.consts.length}\tkept {g.names.length}\tequations {g.eqs.length}" ++
     s!"\tfirst left out {(dropped.take 5).map (fun ci => untrName ci.name)}" ++ why
 

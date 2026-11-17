@@ -7,9 +7,10 @@ The generator run on the example's export.
 Nothing here is written by hand about the environment: `generate cenv` is computed from what the
 checker returned. `generated_names` shows the generator kept every constant of the checker's
 environment, the prelude's (`Eq`, `Nat`, `Quot`, their constructors and recursors) with the
-export's, and `generated_eqs` that it found the equation `f ≡ PUnit.other` twice: as the type of
-the constant `f_eq`, and as the unfolding of the definition `f`. So `generated_f_defeq` derives `f ≡ PUnit.other` in the generated environment, and
-`generated_env_consistent` is the consistency statement for it.
+export's, and `generated_eqs` that it found the equation `f ≡ PUnit.other` twice: as the type of the
+constant `f_eq`, and as the unfolding of the definition `f`. So `generated_f_defeq` derives `f ≡
+PUnit.other` in the generated environment, and `generated_env_consistent` is the consistency
+statement for it.
 -/
 
 namespace Lean4Zfc.Example.PUnit

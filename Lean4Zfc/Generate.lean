@@ -5,15 +5,17 @@ import Lean4Zfc.Convert
 A certified Lean4Lean environment computed from the environment Con-Leche's checker returns.
 
 `generate cenv` walks the checker's constants, oldest first. A constant enters the Lean4Lean
-environment when its type translates back to a Lean4Lean term and `sortOf` types that term at a
-sort in the environment built so far. A constant whose type is `@Eq T a b`, with `a` and `b` typed
-at `T` by `infer`, also adds the stored equation `a ≡ b : T`. Everything else is left out, and
-so, by failing to type, is every later constant that mentions something left out.
+environment when its type translates back to a Lean4Lean term and `sortOf` types that term at a sort
+in the environment built so far. A constant whose type is `@Eq T a b`, with `a` and `b` typed at `T`
+by `infer`, also adds the stored equation `a ≡ b : T`. A kept definition whose stored value
+translates back and is typed at the definition's type adds its unfolding. A `Nat` literal up to
+`litBound` translates as its chain of `Nat.succ`. Everything else is left out, and so, by failing to
+type, is every later constant that mentions something left out.
 
 `generate_certOrdered` proves the result certified against `cenv`, with no hypothesis, so
-`generated_consistent` needs only the checker's acceptance. The generated environment holds no
-equation that is not the type of one of the checker's constants: Con-Leche's model speaks of
-constants and of `Eq`, not of the checker's reduction rules.
+`generated_consistent` needs only the checker's acceptance. The generated environment holds an
+equation only where one of the checker's constants has it as its type or it unfolds a stored
+definition: no recursor rule is added.
 -/
 
 namespace Lean4Zfc
@@ -106,7 +108,9 @@ def natChain : Nat → VExpr
 
 theorem litEq_natChain : ∀ (ps : List ConLeche.Name) (n : Nat),
     LitEq (.lit (.natVal n)) (trExpr ps (natChain n))
-  | ps, 0 => .natLit (by simp [ConLeche.natLitToConstructor, natChain, trExpr, trName_untrName]; exact .refl _)
+  | ps, 0 => .natLit (by
+      simp [ConLeche.natLitToConstructor, natChain, trExpr, trName_untrName]
+      exact .refl _)
   | ps, k + 1 => .natLit (by
       simp only [ConLeche.natLitToConstructor, natChain, trExpr, trName_untrName, List.map_nil]
       exact .app (.refl _) (litEq_natChain ps k))
@@ -189,7 +193,8 @@ structure Generated where
   names : List Lean.Name
   eqs : List VDefEq
 
-/-- The fuel the generator gives each inference: a bound on its depth, a failure when it runs out. -/
+/-- The fuel the generator gives each inference: a bound on its depth, a failure when it runs
+out. -/
 def fuel : Nat := 4096
 
 /-- Add the checker's constant `ci`, if its type translates back and is typed at a sort. -/
