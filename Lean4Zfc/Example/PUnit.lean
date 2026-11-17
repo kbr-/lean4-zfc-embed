@@ -38,7 +38,7 @@ theorem run_ok : run = .ok cenv := by
 theorem accepted : ∃ ds, ConLeche.Cached.checkDecls .verified ConLeche.natOpPinSets
     ConLeche.Cached.maxNatSizeDefault ds = .ok cenv := by
   have h := run_ok
-  unfold run at h
+  unfold run runOn at h
   cases hA : ConLeche.Frontend.builtinPreludeE with
   | error e => rw [hA] at h; cases h
   | ok pre =>

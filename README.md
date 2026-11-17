@@ -1,13 +1,16 @@
 # Lean 4's type theory in set theory
 
 A Lean proof that the type theory of Lean 4, as [Lean4Lean](https://github.com/digama0/lean4lean)
-formalizes it, has a sound interpretation in set theory, and so proves no falsity, assuming a
-sequence of inaccessible cardinals. The sets are any model of the set theory of
+formalizes it, has a sound interpretation in set theory, so that an environment with a model
+proves no falsity; and that two families of environments have a model, assuming a sequence of
+inaccessible cardinals: those built from definitions, and those certified against a run of a
+checker. The sets are any model of the set theory of
 [Con-Leche](https://github.com/leanprover/con-leche); under the cardinal hypothesis Con-Leche
 builds one on Mathlib's type `ZFSet` of sets.
 
-Everything here is checked by Lean v4.35.0, and the general theorems depend on no axiom beyond
-`propext`, `Classical.choice` and `Quot.sound`. Read the section Limits before citing a result:
+Both packages build with Lean v4.35.0, the one under `inaccessibles/` against an existing build of
+Mathlib and not from a fresh clone, and the general theorems depend on no axiom beyond `propext`,
+`Classical.choice` and `Quot.sound`. Read the section Limits before citing a result:
 the theorems are about Lean4Lean's theory and about environments given with a certificate, and say
 nothing of the official kernel.
 
@@ -85,7 +88,9 @@ theorem checked_consistent_of_omegaInaccessibles (h : ConLecheBridge.OmegaInacce
 Lean4Lean has its own predicate for well-formed environments, `VEnv.WF`. It is not used here. Its rule for an axiom asks only that the axiom's type is a type, so it accepts an
 environment with an axiom of type `∀ (p : Prop), p`; `Lean4Zfc/Falsity.lean` proves that such an
 environment is ordered and does type a closed term at `falseE` (`badEnv_proves_false`), and hence
-has no model. And the predicate mentions inductive declarations, which Lean4Lean's
+has no model. `Lean4ZfcTest/UpstreamWF.lean` proves that `VEnv.WF` holds of that environment
+(`badEnv_wf`), so a consistency statement over every `VEnv.WF` environment, as lean4lean-model
+states it, is false. And the predicate mentions inductive declarations, which Lean4Lean's
 `Theory/Inductive.lean` defines as `sorry`, so every theorem naming `VEnv.WF` depends on `sorryAx`.
 
 The same file proves that `falseE` is a proposition in every environment (`falseE_isType`): the
@@ -112,12 +117,13 @@ equation `f ≡ PUnit.other`, certified by `f_eq`. `env_consistent` concludes th
 term at `falseE`, and `f_defeq` derives the equation in it.
 
 The checker's run and each comparison of stored constants is evaluated by compiled code
-(`native_decide`), so the example's theorems depend on seven axioms of compiled evaluation beside
-the three standard ones. The general theorems do not, and the library's root module does not
-import the example. With `f_eq` changed to the false equation `f = PUnit.unit`, the checker rejects
-the export and the build fails.
+(`native_decide`), so `env_consistent` depends on seven axioms of compiled evaluation beside the
+three standard ones. The general theorems do not, and the library's root module does not import
+the example. With `f_eq` changed to the false equation `f = PUnit.unit`
+(`data/f_eq_false.ndjson`), the checker rejects the export: `Lean4ZfcTest/Example.lean` proves it
+(`false_export_rejected`).
 
-Lake does not track the example's two data files: after changing one, change
+Lake does not track the example's data files: after changing one, change
 `Lean4Zfc/Example/PUnitRun.lean` too, or the build reuses the run of the old data.
 
 ## Limits
@@ -135,7 +141,7 @@ Lake does not track the example's two data files: after changing one, change
   Mathlib's `ZFSet`. No theorem of first-order set theory about an encoding of the type theory is
   derived from it.
 - **Con-Leche's coverage is taken from Con-Leche.** That its checker accepts `propext` and
-  `Classical.choice` is read from its `Kernel/StdAxioms.lean`; no export using them was run here.
+  `Classical.choice` is read from its `ConLeche/Kernel/StdAxioms.lean`; no export using them was run here.
 
 ## Layout
 
@@ -149,7 +155,7 @@ Lake does not track the example's two data files: after changing one, change
 | `Lean4Zfc/Bridge.lean` | The translation into Con-Leche's terms, `CertOrdered`, `CertOrdered.consistent` |
 | `Lean4Zfc/Checked.lean` | `checked_consistent` |
 | `Lean4Zfc/Example/` | The certified example and its data |
-| `Lean4ZfcTest/` | The axioms of each theorem, pinned: a `sorry` reaching one fails the build |
+| `Lean4ZfcTest/` | The axioms of each theorem, pinned: a `sorry` reaching one fails the build; the rejected false export; `badEnv_wf` |
 | `inaccessibles/` | A Lake package of its own, the only part that needs Mathlib: the two theorems above |
 | `patches/` | The changes that build Lean4Lean's theory at Lean v4.35.0 |
 
