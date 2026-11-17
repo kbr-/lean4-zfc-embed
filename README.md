@@ -89,8 +89,9 @@ Lean4Lean has its own predicate for well-formed environments, `VEnv.WF`. It is n
 environment with an axiom of type `∀ (p : Prop), p`; `Lean4Zfc/Falsity.lean` proves that such an
 environment is ordered and does type a closed term at `falseE` (`badEnv_proves_false`), and hence
 has no model. `Lean4ZfcTest/UpstreamWF.lean` proves that `VEnv.WF` holds of that environment
-(`badEnv_wf`), so a consistency statement over every `VEnv.WF` environment, as lean4lean-model
-states it, is false. And the predicate mentions inductive declarations, which Lean4Lean's
+(`badEnv_wf`). So the conclusion of lean4lean-model's `consistency` statement, which is stated
+over every `VEnv.WF` environment under the cardinal hypothesis, fails for one of them: that
+statement can hold only if no such sequence of cardinals exists. And the predicate mentions inductive declarations, which Lean4Lean's
 `Theory/Inductive.lean` defines as `sorry`, so every theorem naming `VEnv.WF` depends on `sorryAx`.
 
 The same file proves that `falseE` is a proposition in every environment (`falseE_isType`): the
