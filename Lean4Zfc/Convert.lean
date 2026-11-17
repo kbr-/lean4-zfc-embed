@@ -57,7 +57,10 @@ def infer (env : VEnv) (eqs : List VDefEq) (U : Nat) : Nat → List VExpr → VE
     match infer env eqs U n Γ f, infer env eqs U n Γ a with
     | some Tf, some A' =>
       match whnfTy env eqs U n Γ Tf with
-      | some (.forallE A B) => if A = A' then some (B.inst a) else none
+      | some (.forallE A B) =>
+        if A = A' ∨ (stepsTo env eqs U n Γ A A').isSome ∨ (stepsTo env eqs U n Γ A' A).isSome then
+          some (B.inst a)
+        else none
       | _ => none
     | _, _ => none
   | n + 1, Γ, .lam A b =>
@@ -106,6 +109,28 @@ def chase (env : VEnv) (eqs : List VDefEq) (U : Nat) :
       | some (T', S) => if S = .sort s then chase env eqs U n Γ T' s else none
       | none => none
 
+/-- Some level `s` when `T` steps to `target` at the sort `s`, every step at that sort. -/
+def stepsTo (env : VEnv) (eqs : List VDefEq) (U : Nat) :
+    Nat → List VExpr → VExpr → VExpr → Option VLevel
+  | 0, _, _, _ => none
+  | n + 1, Γ, T, target =>
+    match red env eqs U n Γ T with
+    | some (T', .sort s) =>
+      if T' = target then some s else stepsToAt env eqs U n Γ T' target s
+    | _ => none
+
+/-- `s` when `T` steps to `target`, every step at the sort `s`. -/
+def stepsToAt (env : VEnv) (eqs : List VDefEq) (U : Nat) :
+    Nat → List VExpr → VExpr → VExpr → VLevel → Option VLevel
+  | 0, _, _, _, _ => none
+  | n + 1, Γ, T, target, s =>
+    match red env eqs U n Γ T with
+    | some (T', S) =>
+      if S = .sort s then
+        if T' = target then some s else stepsToAt env eqs U n Γ T' target s
+      else none
+    | none => none
+
 /-- One head step of `e`, with the type the step is taken at. -/
 def red (env : VEnv) (eqs : List VDefEq) (U : Nat) :
     Nat → List VExpr → VExpr → Option (VExpr × VExpr)
@@ -135,6 +160,10 @@ structure Sound (env : VEnv) (eqs : List VDefEq) (U : Nat) (n : Nat) : Prop wher
   chase : ∀ {Γ T s T'}, chase env eqs U n Γ T s = some T' →
     T' = T ∨ env.IsDefEq U Γ T T' (.sort s)
   red : ∀ {Γ e e' A}, red env eqs U n Γ e = some (e', A) → env.IsDefEq U Γ e e' A
+  stepsTo : ∀ {Γ T target s}, stepsTo env eqs U n Γ T target = some s →
+    ∃ s', env.IsDefEq U Γ T target (.sort s')
+  stepsToAt : ∀ {Γ T target s r}, stepsToAt env eqs U n Γ T target s = some r →
+    env.IsDefEq U Γ T target (.sort s)
 
 /-- Retyping at a converted type. -/
 theorem retype {env : VEnv} {U : Nat} {Γ : List VExpr} {e T T' : VExpr}
@@ -147,11 +176,11 @@ theorem retype {env : VEnv} {U : Nat} {Γ : List VExpr} {e T T' : VExpr}
 theorem sound {env : VEnv} {eqs : List VDefEq} {U : Nat}
     (heqs : ∀ df ∈ eqs, env.defeqs df) : ∀ n, Sound env eqs U n
   | 0 => by
-    refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> intros <;> rename_i h <;>
-      simp [infer, sortOf, whnfTy, chase, red] at h
+    refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> intros <;> rename_i h <;>
+      simp [infer, sortOf, whnfTy, chase, red, stepsTo, stepsToAt] at h
   | n + 1 => by
     have ih : Sound env eqs U n := sound heqs n
-    refine ⟨?_, ?_, ?_, ?_, ?_⟩
+    refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
     · intro Γ e A h
       cases e with
       | bvar i => exact .bvar (lookupTy_sound (by simpa [infer] using h))
@@ -176,11 +205,20 @@ theorem sound {env : VEnv} {eqs : List VDefEq} {U : Nat}
         · rename_i Tf A' hf ha
           split at h
           · rename_i A₀ B hw
+            have hF := retype (ih.infer hf) (ih.whnfTy hw)
+            have hA := ih.infer ha
             split at h
-            · rename_i heq
+            · rename_i hc
               cases h
-              subst heq
-              exact VEnv.HasType.app (retype (ih.infer hf) (ih.whnfTy hw)) (ih.infer ha)
+              rcases hc with heq | h1 | h2
+              · subst heq
+                exact VEnv.HasType.app hF hA
+              · obtain ⟨s, hs⟩ := Option.isSome_iff_exists.1 h1
+                obtain ⟨s', hd⟩ := ih.stepsTo hs
+                exact VEnv.HasType.app hF (.defeqDF (.symm hd) hA)
+              · obtain ⟨s, hs⟩ := Option.isSome_iff_exists.1 h2
+                obtain ⟨s', hd⟩ := ih.stepsTo hs
+                exact VEnv.HasType.app hF (.defeqDF hd hA)
             · cases h
           · cases h
         · cases h
@@ -255,6 +293,30 @@ theorem sound {env : VEnv} {eqs : List VDefEq} {U : Nat}
             subst heq
             exact .appDF (ih.red hf) (ih.infer ha)
           · cases h
+        · cases h
+      · cases h
+    · intro Γ T target s h
+      simp only [stepsTo] at h
+      split at h
+      · rename_i T' s' hr
+        split at h
+        · rename_i heq
+          subst heq
+          exact ⟨s', ih.red hr⟩
+        · exact ⟨s', .trans (ih.red hr) (ih.stepsToAt h)⟩
+      · cases h
+    · intro Γ T target s r h
+      simp only [stepsToAt] at h
+      split at h
+      · rename_i T' S hr
+        split at h
+        · rename_i hS
+          subst hS
+          split at h
+          · rename_i heq
+            subst heq
+            exact ih.red hr
+          · exact .trans (ih.red hr) (ih.stepsToAt h)
         · cases h
       · cases h
 

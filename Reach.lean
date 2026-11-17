@@ -13,6 +13,21 @@ depend on it.
 
 open Lean4Zfc
 
+/-- The first construct of a term, in reading order, that Lean4Lean's terms have no counterpart
+for, or a level the parameter names `ps` don't cover. -/
+def blocker (ps : List ConLeche.Name) : ConLeche.Expr → Option String
+  | .fvar _ _ => some "a free variable"
+  | .letE _ _ _ => some "a let"
+  | .lit _ => some "a literal"
+  | .proj _ _ _ => some "a projection"
+  | .sort u => if (untrLevel ps u).isNone then some "a level outside its parameters" else none
+  | .const _ us =>
+    if (untrLevels ps us).isNone then some "a level outside its parameters" else none
+  | .app f a => (blocker ps f).orElse fun _ => blocker ps a
+  | .lam A b => (blocker ps A).orElse fun _ => blocker ps b
+  | .forallE A B => (blocker ps A).orElse fun _ => blocker ps B
+  | .bvar _ => none
+
 /-- Which of the generator's conditions the constant `ci` fails in the generated state `g`. For
 the first constant left out, `g` may be the final state: the constants before it were all kept,
 and its type mentions none after it. -/
@@ -22,7 +37,9 @@ def whyLeftOut (cenv : ConLeche.Env) (g : Generated) (ci : ConLeche.ConstantInfo
   else if ¬ ci.toConstantVal.levelParams.Nodup then "its level parameter names repeat"
   else
     match untrExpr ci.toConstantVal.levelParams ci.toConstantVal.type with
-    | none => "its type has a let, a literal, a projection or a free variable"
+    | none =>
+      s!"its type has {(blocker ci.toConstantVal.levelParams ci.toConstantVal.type).getD
+        "a construct the translation refuses"}"
     | some ty =>
       match sortOf g.env g.eqs ci.toConstantVal.levelParams.length fuel [] ty with
       | none => "the inferencer does not type its type at a sort"
