@@ -1,0 +1,36 @@
+# The consistency theorems under a sequence of inaccessible cardinals. A package of its own, as
+# Con-Leche's bridge is: only this last step needs Mathlib, and the library above stays free of it.
+name = "lean4-zfc-inaccessibles"
+defaultTargets = ["Lean4ZfcInaccessibles", "Lean4ZfcInaccessiblesTest"]
+
+# Mathlib first: Lake resolves a shared transitive dependency to the first pin it meets.
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4"
+rev = "v4.35.0"
+
+[[require]]
+name = "con-leche"
+path = "../../lean4-zfc-sources/con-leche"
+
+# Con-Leche's bridge from the cardinals to its set theory, over Mathlib's `ZFSet`.
+[[require]]
+name = "con-leche-bridge-lean4lean-model"
+path = "../../lean4-zfc-sources/con-leche/bridge/lean4lean-model"
+
+[[require]]
+name = "lean4lean"
+path = "../../lean4-zfc-sources/lean4lean-435"
+
+[[require]]
+name = "lean4-zfc-embed"
+path = ".."
+
+[[lean_lib]]
+name = "Lean4ZfcInaccessibles"
+allowNonModules = true
+
+[[lean_lib]]
+name = "Lean4ZfcInaccessiblesTest"
+globs = ["Lean4ZfcInaccessiblesTest.+"]
+allowNonModules = true
