@@ -158,11 +158,11 @@ Lake does not track the example's data files: after changing one, change
   projection, or that `inferType` can't type without reduction, or whose level parameter names
   repeat, and with it every later constant that mentions it; evaluating `(generated cenv).names`
   lists what it kept. Run on the 580 export fixtures of Con-Leche's `tests/e2e/`
-  (`lake exe reach`), this repository's run of the checker accepted 328, and of the 20764
-  constants of their environments, each count including the prelude's, the generator kept 19040,
-  keeping 153 environments whole. Twelve fixtures gave no result within one second, among them
-  `tower_beqpair`, which Con-Leche's own binary accepts at once: there the time is this
-  repository's. The generated environment holds an
+  (`lake exe reach`), this repository's run of the checker accepted 338. On 328 of them the
+  generator finished within a second, and of the 20764 constants of those environments, each
+  count including the prelude's, it kept 19040, keeping 153 environments whole. On the other ten,
+  among them `tower_beqpair`, which Con-Leche's own binary accepts at once, the generator did not
+  finish within a second. The generated environment holds an
   equation only where a constant of the accepted environment has it as its type, `@Eq T a b`: a
   definition's unfolding and a recursor's computation rule are not added from the checker's
   reduction. Whether Con-Leche's checker and Lean4Lean's theory accept the same environments is
