@@ -25,3 +25,9 @@ allowNonModules = true
 name = "Lean4ZfcTest"
 globs = ["Lean4ZfcTest.+"]
 allowNonModules = true
+
+# `lake exe reach FILE...` measures how much of each export the generator keeps. Not a default
+# target: it compiles the checker and the generator to native code.
+[[lean_exe]]
+name = "reach"
+root = "Reach"

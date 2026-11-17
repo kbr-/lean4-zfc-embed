@@ -157,7 +157,12 @@ Lake does not track the example's data files: after changing one, change
 - **The generator is partial.** It leaves out a constant whose type has a `let`, a literal or a
   projection, or that `inferType` can't type without reduction, or whose level parameter names
   repeat, and with it every later constant that mentions it; evaluating `(generated cenv).names`
-  lists what it kept. It was run on the example's export only. The generated environment holds an
+  lists what it kept. Run on the 580 export fixtures of Con-Leche's `tests/e2e/`
+  (`lake exe reach`), this repository's run of the checker accepted 328, and of the 20764
+  constants of their environments, each count including the prelude's, the generator kept 19040,
+  keeping 153 environments whole. Twelve fixtures gave no result within one second, among them
+  `tower_beqpair`, which Con-Leche's own binary accepts at once: there the time is this
+  repository's. The generated environment holds an
   equation only where a constant of the accepted environment has it as its type, `@Eq T a b`: a
   definition's unfolding and a recursor's computation rule are not added from the checker's
   reduction. Whether Con-Leche's checker and Lean4Lean's theory accept the same environments is
@@ -182,6 +187,7 @@ Lake does not track the example's data files: after changing one, change
 | `Lean4Zfc/Infer.lean` | `inferType`, `inferType_sound` |
 | `Lean4Zfc/Generate.lean` | `generate`, `generate_certOrdered`, `generated_consistent` |
 | `Lean4Zfc/Example/` | The example, certified by hand and by the generator, and its data |
+| `Reach.lean` | `lake exe reach FILE...`: how many constants of each export the generator keeps |
 | `Lean4ZfcTest/` | The axioms of each theorem, pinned: a `sorry` reaching one fails the build; the rejected false export; `badEnv_wf` |
 | `inaccessibles/` | A Lake package of its own, the only part that needs Mathlib: the theorems above |
 | `patches/` | The changes that build Lean4Lean's theory at Lean v4.35.0 |
