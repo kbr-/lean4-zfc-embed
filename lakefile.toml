@@ -14,6 +14,9 @@ path = "../lean4-zfc-sources/con-leche"
 
 [[lean_lib]]
 name = "Lean4Zfc"
+# The root module imports the general theorems; the example is built with them but not imported,
+# so that importing `Lean4Zfc` brings no axiom of compiled evaluation.
+globs = ["Lean4Zfc", "Lean4Zfc.+"]
 # Con-Leche declares itself designed for the module system and these files are classic ones.
 allowNonModules = true
 

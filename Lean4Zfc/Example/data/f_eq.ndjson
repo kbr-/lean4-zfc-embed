@@ -1,0 +1,12 @@
+{"in":11,"str":{"pre":0,"str":"Eq"}}
+{"in":12,"str":{"pre":11,"str":"refl"}}
+{"in":13,"str":{"pre":0,"str":"f_eq"}}
+{"const":{"name":11,"us":[1]},"ie":22}
+{"app":{"arg":1,"fn":22},"ie":23}
+{"const":{"name":10,"us":[]},"ie":24}
+{"app":{"arg":24,"fn":23},"ie":25}
+{"app":{"arg":8,"fn":25},"ie":26}
+{"const":{"name":12,"us":[1]},"ie":27}
+{"app":{"arg":1,"fn":27},"ie":28}
+{"app":{"arg":8,"fn":28},"ie":29}
+{"thm":{"all":[13],"levelParams":[],"name":13,"type":26,"value":29}}
