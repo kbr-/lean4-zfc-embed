@@ -196,9 +196,31 @@ def stepEq (cenv : ConLeche.Env) (g : Generated) (ci : ConLeche.ConstantInfo) :
     | _ => none
   else none
 
+/-- Add the unfolding of the checker's definition `ci`, if its constant was kept, its value
+translates back, and both the value and the constant at its own level parameters are typed at
+the constant's type. -/
+def stepDelta (cenv : ConLeche.Env) (g : Generated) (ci : ConLeche.ConstantInfo) :
+    Option Generated :=
+  match ci with
+  | .defnInfo cv value hint =>
+    if ConLeche.ConstantInfo.defnInfo cv value hint ∈ cenv.consts then
+      match g.env.constants (untrName cv.name),
+        untrExpr (lpOf cenv (untrName cv.name)) value with
+      | some vc, some v =>
+        if inferType g.env vc.uvars [] v = some vc.type ∧
+            inferType g.env vc.uvars [] (.const (untrName cv.name) (params vc.uvars)) =
+              some vc.type then
+          some ⟨g.env.addDefEq (unfoldEq (untrName cv.name) vc v), g.names,
+            unfoldEq (untrName cv.name) vc v :: g.eqs⟩
+        else none
+      | _, _ => none
+    else none
+  | _ => none
+
 def step (cenv : ConLeche.Env) (g : Generated) (ci : ConLeche.ConstantInfo) : Generated :=
   let g₁ := (stepConst cenv g ci).getD g
-  (stepEq cenv g₁ ci).getD g₁
+  let g₂ := (stepEq cenv g₁ ci).getD g₁
+  (stepDelta cenv g₂ ci).getD g₂
 
 /-- The generator's run over the checker's constants, oldest first. -/
 def generated (cenv : ConLeche.Env) : Generated :=
@@ -297,8 +319,38 @@ theorem stepEq_good {cenv : ConLeche.Env} {g g' : Generated} {ci : ConLeche.Cons
     · cases h
   · cases h
 
+theorem stepDelta_good {cenv : ConLeche.Env} {g g' : Generated} {ci : ConLeche.ConstantInfo}
+    (hg : g.Good cenv) (h : stepDelta cenv g ci = some g') : g'.Good cenv := by
+  unfold stepDelta at h
+  split at h
+  · rename_i cv value hint
+    split at h
+    · rename_i hmem
+      split at h
+      · rename_i vc v hc hv
+        split at h
+        · rename_i hcond
+          obtain ⟨h1, h2⟩ := hcond
+          cases h
+          refine ⟨.delta hg.cert hc ⟨inferType_sound h2, inferType_sound h1⟩
+            ⟨cv, hint, ?_, (trName_untrName _).symm⟩, fun n hn => hg.names n hn, ?_⟩
+          · rw [trExpr_untrExpr hv]; exact hmem
+          · intro df hdf
+            cases hdf with
+            | head => exact Or.inl rfl
+            | tail _ hdf => exact Or.inr (hg.eqs df hdf)
+        · cases h
+      · cases h
+    · cases h
+  · cases h
+
 theorem step_good {cenv : ConLeche.Env} {g : Generated} (ci : ConLeche.ConstantInfo)
     (hg : g.Good cenv) : (step cenv g ci).Good cenv := by
+  have h3 : ∀ g₁ : Generated, g₁.Good cenv → ((stepDelta cenv g₁ ci).getD g₁).Good cenv := by
+    intro g₁ hg₁
+    cases h : stepDelta cenv g₁ ci with
+    | none => exact hg₁
+    | some g' => exact stepDelta_good hg₁ h
   have h1 : ((stepConst cenv g ci).getD g).Good cenv := by
     cases h : stepConst cenv g ci with
     | none => exact hg
@@ -308,7 +360,7 @@ theorem step_good {cenv : ConLeche.Env} {g : Generated} (ci : ConLeche.ConstantI
     cases h : stepEq cenv g₁ ci with
     | none => exact hg₁
     | some g' => exact stepEq_good hg₁ h
-  exact h2 _ h1
+  exact h3 _ (h2 _ h1)
 
 theorem generated_good (cenv : ConLeche.Env) : (generated cenv).Good cenv := by
   have key : ∀ (l : List ConLeche.ConstantInfo) (g : Generated), g.Good cenv →

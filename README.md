@@ -56,14 +56,20 @@ the inversion of sorts and two more lemmas as `sorry`, and the proof of unique t
   `CertOrdered cenv lp env`, builds the Lean4Lean environment `env` one constant and one stored
   equation at a time, each typed in the theory and each matched in the accepted environment `cenv`:
   a constant by the stored constant of the same name, level parameters and type, an equation by a
-  stored constant whose type is that equation.
+  stored constant whose type is that equation. A third rule certifies the unfolding of a constant,
+  `c ≡ v`, by a stored definition of that name whose value is the translation of `v`. Its soundness
+  rests on a law Con-Leche's public `Model` does not state, that a stored definition's value denotes
+  the definition's own value; `Lean4Zfc/Checked.lean` proves it from Con-Leche's internal invariant
+  (`defnLaw_ofEnvModelM`), so the bridge reaches under Con-Leche's public statement at this one
+  point.
 - `generated_consistent` (`Lean4Zfc/Generate.lean`): the environment `generate cenv`, computed from
   the accepted environment `cenv`. The generator walks the checker's constants, oldest first, and
   adds each one whose type is a Lean4Lean term typed at a sort by `inferType`
   (`Lean4Zfc/Infer.lean`), a type inferencer that reduces nothing and is proved sound
   (`inferType_sound`); a constant whose type is an equation `@Eq T a b` with both sides typed at `T`
-  also adds the stored equation. `generate_certOrdered` proves the result certified, with no
-  hypothesis, so this theorem asks only the checker's acceptance.
+  also adds the stored equation. A kept definition whose stored value is typed at its type also adds
+  its unfolding. `generate_certOrdered` proves the result certified, with no hypothesis, so this
+  theorem asks only the checker's acceptance.
 
 **From inaccessible cardinals** (`inaccessibles/Lean4ZfcInaccessibles.lean`). The hypothesis is the
 one of the `consistency` statement in lean4lean-model, a strictly increasing sequence of
@@ -138,9 +144,10 @@ checker rejects the export: `Lean4ZfcTest/Example.lean` proves it (`false_export
 
 `Lean4Zfc/Example/PUnitGenerated.lean` runs the generator on the same result of the checker. It
 keeps every constant the checker's environment holds, the export's and the prelude's
-(`generated_names`), and finds the one equation (`generated_eqs`); `generated_f_defeq` derives
-`f ≡ PUnit.other` in the generated environment and `generated_env_consistent` is its consistency.
-The generator's two outputs are evaluated by compiled code as well.
+(`generated_names`), and finds the equation `f ≡ PUnit.other` twice, as the type of `f_eq` and as
+the unfolding of `f` (`generated_eqs`); `generated_f_defeq` derives `f ≡ PUnit.other` in the
+generated environment and `generated_env_consistent` is its consistency. The generator's two outputs
+are evaluated by compiled code as well.
 
 Lake does not track the example's data files: after changing one, change
 `Lean4Zfc/Example/PUnitRun.lean` too, or the build reuses the run of the old data.
@@ -159,13 +166,14 @@ Lake does not track the example's data files: after changing one, change
   a file with no result after one second was abandoned), this repository's run of the checker
   accepted 338, did not accept 240 and gave no answer on 2. On 328 of the accepted the generator
   finished, and of the 20764 constants of those environments, each count including the prelude's, it
-  kept 19040, keeping 153 environments whole; the totals are sums over the lines `reach` prints. On
-  the other ten, among them `tower_beqpair`, which Con-Leche's own binary accepts at once, the
-  generator did not finish within the second; how long it takes there was not measured. The
-  generated environment holds an equation only where a constant of the accepted environment has it
-  as its type, `@Eq T a b`: a definition's unfolding and a recursor's computation rule are not added
-  from the checker's reduction. Whether Con-Leche's checker and Lean4Lean's theory accept the same
-  environments is not addressed.
+  kept 19040, keeping 153 environments whole and storing 4539 equations; the totals are sums over
+  the lines `reach` prints. On the other ten, among them `tower_beqpair`, which Con-Leche's own
+  binary accepts at once, the generator did not finish within the second; how long it takes there
+  was not measured. The generated environment holds an equation only where a constant of the
+  accepted environment has it as its type, `@Eq T a b`, or where it unfolds a kept definition whose
+  value `inferType` types at the definition's type: a recursor's computation rule is not added, and
+  `inferType` uses no stored equation. Whether Con-Leche's checker and Lean4Lean's theory accept the
+  same environments is not addressed.
 - **The result is a Lean theorem with a hypothesis.** `OmegaInaccessibles` is assumed, over
   Mathlib's `ZFSet`. No theorem of first-order set theory about an encoding of the type theory is
   derived from it.
