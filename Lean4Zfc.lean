@@ -3,6 +3,8 @@ import Lean4Zfc.Fundamental
 import Lean4Zfc.Falsity
 import Lean4Zfc.Definition
 import Lean4Zfc.Built
+import Lean4Zfc.Bridge
+import Lean4Zfc.Checked
 
 /-!
 Lean 4's type theory interpreted in set theory.

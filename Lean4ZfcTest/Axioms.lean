@@ -35,6 +35,24 @@ info: 'Lean4Zfc.Built.consistent' depends on axioms: [propext, Classical.choice,
 #guard_msgs in
 #print axioms Lean4Zfc.Built.consistent
 
+/--
+info: 'Lean4Zfc.denotes_tr' depends on axioms: [propext, Classical.choice, Quot.sound]
+-/
+#guard_msgs in
+#print axioms Lean4Zfc.denotes_tr
+
+/--
+info: 'Lean4Zfc.CertOrdered.consistent' depends on axioms: [propext, Classical.choice, Quot.sound]
+-/
+#guard_msgs in
+#print axioms Lean4Zfc.CertOrdered.consistent
+
+/--
+info: 'Lean4Zfc.checked_consistent' depends on axioms: [propext, Classical.choice, Quot.sound]
+-/
+#guard_msgs in
+#print axioms Lean4Zfc.checked_consistent
+
 /-- info: 'Lean4Zfc.falseE_isType' depends on axioms: [propext] -/
 #guard_msgs in
 #print axioms Lean4Zfc.falseE_isType
