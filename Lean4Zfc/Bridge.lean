@@ -167,10 +167,35 @@ def eqExpr (ps : List ConLeche.Name) (u : VLevel) (T a b : VExpr) : ConLeche.Exp
   .app (.app (.app (.const ConLeche.eqName [trLevel ps u]) (trExpr ps T)) (trExpr ps a))
     (trExpr ps b)
 
+/-- The level parameters `0, …, n - 1`, a constant's own. -/
+def params (n : Nat) : List VLevel := (List.range n).map .param
+
+theorem params_eval (L : List Nat) {n i : Nat} (hi : i < n) :
+    ((params n).map (VLevel.eval L)).getD i 0 = L.getD i 0 := by
+  simp [params, List.getD, hi, VLevel.eval]
+
+/-- The equation `c ≡ v : A` unfolding the constant `c`, taken at its own level parameters. -/
+def unfoldEq (c : Lean.Name) (vc : VConstant) (v : VExpr) : VDefEq :=
+  ⟨vc.uvars, .const c (params vc.uvars), v, vc.type⟩
+
+/-- A stored definition's value denotes the definition's own value. Con-Leche's `Model` does not
+state this; `Checked.lean` proves it of the model read off the checker's invariant. -/
+def DefnLaw (M : ConLeche.Model V cenv) : Prop :=
+  ∀ cv value hint, ConLeche.ConstantInfo.defnInfo cv value hint ∈ cenv.consts →
+    ∀ (φ : ConLeche.Name → Nat) (ρ : Nat → V),
+      ConLeche.Denotes M.cval cenv φ ρ value (M.cval cv.name φ)
+
 /-- A Lean4Lean environment built step by step, each constant certified by a stored Con-Leche
-constant and each stored equation by a stored constant whose type is the equation. -/
+constant, each stored equation by a stored constant whose type is the equation, and each
+unfolding of a constant by a stored definition of its name whose value is the translated
+right-hand side. -/
 inductive CertOrdered (cenv : ConLeche.Env) (lp : Lean.Name → List ConLeche.Name) :
     VEnv → Prop where
+  | delta {env : VEnv} {c : Lean.Name} {vc : VConstant} {v : VExpr} :
+    CertOrdered cenv lp env → env.constants c = some vc → (unfoldEq c vc v).WF env →
+    (∃ cv hint, ConLeche.ConstantInfo.defnInfo cv (trExpr (lp c) v) hint ∈ cenv.consts ∧
+      cv.name = trName c) →
+    CertOrdered cenv lp (env.addDefEq (unfoldEq c vc v))
   | empty : CertOrdered cenv lp .empty
   | const {env env' : VEnv} {n : Lean.Name} {ci : VConstant} :
     CertOrdered cenv lp env → ci.WF env → env.addConst n ci = some env' →
@@ -188,6 +213,7 @@ theorem CertOrdered.ordered {env : VEnv} (h : CertOrdered cenv lp env) : env.Ord
   | empty => exact .empty
   | const _ h1 h2 _ ih => exact .const ih h1 h2
   | defeq _ h1 _ _ ih => exact .defeq ih h1
+  | delta _ _ h1 _ ih => exact .defeq ih h1
 
 theorem CertOrdered.certConst {env : VEnv} (h : CertOrdered cenv lp env) :
     ∀ {c vc}, env.constants c = some vc → CertConst cenv lp c vc := by
@@ -207,6 +233,7 @@ theorem CertOrdered.certConst {env : VEnv} (h : CertOrdered cenv lp env) :
         exact hcc
       · exact ih hc
   | defeq _ _ _ _ ih => intro c vc hc; exact ih hc
+  | delta _ _ _ _ ih => intro c vc hc; exact ih hc
 
 /-- The constants of a certified environment take values in their types' denotations. -/
 theorem CertOrdered.constMem {env : VEnv} (h : CertOrdered cenv lp env)
@@ -225,9 +252,40 @@ theorem CertOrdered.constMem {env : VEnv} (h : CertOrdered cenv lp env)
   exact hin
 
 theorem CertOrdered.envModel {env : VEnv} (h : CertOrdered cenv lp env)
-    (M : ConLeche.Model V cenv) (hpar : ParamsOnly M) : EnvModel env (cvalOf M lp) := by
+    (M : ConLeche.Model V cenv) (hpar : ParamsOnly M) (hdl : DefnLaw M) :
+    EnvModel env (cvalOf M lp) := by
   refine ⟨fun hc L ρ => h.constMem M hpar hc L ρ, ?_⟩
   induction h with
+  | @delta env c vc v hprev hc hwf hcert ih =>
+    intro df' hdf L ρ
+    rcases hdf with rfl | hdf
+    · have hord := hprev.ordered
+      have Mprev : EnvModel env (cvalOf M lp) :=
+        ⟨fun hc L ρ => hprev.constMem M hpar hc L ρ, ih⟩
+      have ha := (fundamental Mprev (VEnv.IsDefEq.strong hord (Γ := []) trivial hwf.1) L ρ trivial).2
+      have hT2 := constsIn_of_isDefEq (Ordered.constsIn hord) hwf.2 (by simp)
+      have hL2 := VEnv.IsDefEq.levelWF hwf.2 trivial
+      obtain ⟨ci, _, hf, _, hps, hnd, hlen, _⟩ := hprev.certConst hc
+      obtain ⟨cv, hint, hmemd, hcvn⟩ := hcert
+      have hlw : v.LevelWF (lp c).length := hlen ▸ hL2.1
+      have hd1 := hdl cv _ hint hmemd (assign (lp c) L) ρ
+      have hd2 : ConLeche.Denotes M.cval cenv (assign (lp c) L) ρ (trExpr (lp c) v)
+          (interp (cvalOf M lp) L ρ v) :=
+        denotes_tr M hpar hprev.certConst hnd hT2.1 hlw L ρ
+      have e1 : M.cval cv.name (assign (lp c) L) = interp (cvalOf M lp) L ρ v := by
+        first
+          | exact ConLeche.Denotes_functional hd1 hd2
+          | exact (ConLeche.Denotes_functional hd2 hd1).symm
+      refine ⟨?_, ha⟩
+      show interp (cvalOf M lp) L ρ (.const c (params vc.uvars)) = interp (cvalOf M lp) L ρ v
+      rw [← e1, hcvn]
+      simp only [interp]
+      refine hpar _ ci hf _ _ fun p hp => ?_
+      rw [hps] at hp
+      obtain ⟨i, hi, rfl⟩ := List.mem_iff_getElem.1 hp
+      rw [assign_getElem hnd _ hi, assign_getElem hnd _ hi]
+      exact params_eval L (hlen ▸ hi)
+    · exact ih hdf L ρ
   | empty => intro df hdf; exact hdf.elim
   | @const env env' n ci _ _ hadd _ ih =>
     intro df hdf L ρ
@@ -275,8 +333,8 @@ theorem CertOrdered.envModel {env : VEnv} (h : CertOrdered cenv lp env)
 
 /-- A certified environment types no closed term at `∀ (p : Prop), p`. -/
 theorem CertOrdered.consistent {env : VEnv} {U : Nat} (h : CertOrdered cenv lp env)
-    (M : ConLeche.Model V cenv) (hpar : ParamsOnly M) :
+    (M : ConLeche.Model V cenv) (hpar : ParamsOnly M) (hdl : DefnLaw M) :
     ¬ ∃ e, env.HasType U [] e falseE :=
-  no_proof_of_false h.ordered (h.envModel M hpar)
+  no_proof_of_false h.ordered (h.envModel M hpar hdl)
 
 end Lean4Zfc
