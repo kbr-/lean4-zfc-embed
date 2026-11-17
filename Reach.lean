@@ -156,8 +156,13 @@ def main (args : List String) : IO Unit := do
   if let ["--summary", file] := args then
     out.putStrLn (tally (← IO.FS.readFile file)).render
     return
-  if let ["--measure", dir, secs, jobs] := args then
-    measureDir dir secs.toNat! jobs.toNat!
+  if let "--measure" :: rest := args then
+    match rest with
+    | [dir, secs, jobs] =>
+      match secs.toNat?, jobs.toNat? with
+      | some s, some (j + 1) => measureDir dir s (j + 1)
+      | _, _ => throw <| IO.userError "usage: reach --measure DIR SECONDS JOBS, JOBS at least 1"
+    | _ => throw <| IO.userError "usage: reach --measure DIR SECONDS JOBS"
     return
   for path in args do
     out.putStr s!"{path}\t"
