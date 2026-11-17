@@ -4,15 +4,16 @@ A Lean proof that the type theory of Lean 4, as [Lean4Lean](https://github.com/d
 formalizes it, has a sound interpretation in set theory, so that an environment with a model
 proves no falsity; and that two families of environments have a model, assuming a sequence of
 inaccessible cardinals: those built from definitions, and those certified against a run of a
-checker. The sets are any model of the set theory of
+checker. A certified environment and its certificate are computed from the checker's result by a
+function proved correct, so no certificate has to be written. The sets are any model of the set theory of
 [Con-Leche](https://github.com/leanprover/con-leche); under the cardinal hypothesis Con-Leche
 builds one on Mathlib's type `ZFSet` of sets.
 
 Both packages build with Lean v4.35.0, the one under `inaccessibles/` against an existing build of
 Mathlib and not from a fresh clone, and the general theorems depend on no axiom beyond `propext`,
 `Classical.choice` and `Quot.sound`. Read the section Limits before citing a result:
-the theorems are about Lean4Lean's theory and about environments given with a certificate, and say
-nothing of the official kernel.
+the theorems are about Lean4Lean's theory and about environments built from definitions or
+certified against a checker's run, and say nothing of the official kernel.
 
 ## What is proved
 
@@ -59,6 +60,13 @@ the proof of unique typing calls it.
   equation at a time, each typed in the theory and each matched in the accepted environment
   `cenv`: a constant by the stored constant of the same name, level parameters and type, an
   equation by a stored constant whose type is that equation.
+- `generated_consistent` (`Lean4Zfc/Generate.lean`): the environment `generate cenv`, computed from
+  the accepted environment `cenv`. The generator walks the checker's constants, oldest first, and
+  adds each one whose type is a Lean4Lean term typed at a sort by `inferType`
+  (`Lean4Zfc/Infer.lean`), a type inferencer that reduces nothing and is proved sound
+  (`inferType_sound`); a constant whose type is an equation `@Eq T a b` with both sides typed at
+  `T` also adds the stored equation. `generate_certOrdered` proves the result certified, with no
+  hypothesis, so this theorem asks only the checker's acceptance.
 
 **From inaccessible cardinals** (`inaccessibles/Lean4ZfcInaccessibles.lean`). The hypothesis is the
 one of the `consistency` statement in lean4lean-model, a strictly increasing sequence of
@@ -81,6 +89,12 @@ theorem checked_consistent_of_omegaInaccessibles (h : ConLecheBridge.OmegaInacce
     {lp : Lean.Name → List ConLeche.Name} {env : VEnv} {U : Nat}
     (hc : CertOrdered cenv lp env) :
     ¬ ∃ e, env.HasType U [] e falseE
+
+theorem generated_consistent_of_omegaInaccessibles (h : ConLecheBridge.OmegaInaccessibles.{u})
+    (pins : List ConLeche.NatOpPinSet) (maxNatSize : Nat) (ds : Array ConLeche.Declaration)
+    {cenv : ConLeche.Env}
+    (accepted : ConLeche.Cached.checkDecls .verified pins maxNatSize ds = .ok cenv) {U : Nat} :
+    ¬ ∃ e, (generate cenv).HasType U [] e falseE
 ```
 
 ## Why the theorems have hypotheses about the environment
@@ -99,8 +113,8 @@ theorems' conclusion is about a type of the theory.
 
 ## The example
 
-`Lean4Zfc/Example/` certifies one small environment by hand, to show the certificate can be given.
-It runs Con-Leche's checker inside Lean on Con-Leche's test fixture
+`Lean4Zfc/Example/` certifies one small environment twice: by hand, and with the generator. It
+runs Con-Leche's checker inside Lean on Con-Leche's test fixture
 `tests/e2e/corner_punit_own.ndjson`, which declares
 
 ```lean
@@ -124,6 +138,12 @@ the example. With `f_eq` changed to the false equation `f = PUnit.unit`
 (`data/f_eq_false.ndjson`), the checker rejects the export: `Lean4ZfcTest/Example.lean` proves it
 (`false_export_rejected`).
 
+`Lean4Zfc/Example/PUnitGenerated.lean` runs the generator on the same result of the checker. It
+keeps every constant the checker's environment holds, the export's and the prelude's
+(`generated_names`), and finds the one equation (`generated_eqs`); `generated_f_defeq` derives
+`f ≡ PUnit.other` in the generated environment and `generated_env_consistent` is its consistency.
+The generator's two outputs are evaluated by compiled code as well.
+
 Lake does not track the example's data files: after changing one, change
 `Lean4Zfc/Example/PUnitRun.lean` too, or the build reuses the run of the old data.
 
@@ -134,10 +154,14 @@ Lake does not track the example's data files: after changing one, change
   Lean is made here.
 - **Nothing is said about the official kernel**, or about any checker's implementation beyond
   what Con-Leche proves of its own.
-- **A certificate is a hypothesis.** It needs, for every constant and stored equation, a typing
-  derivation in Lean4Lean's theory. Nothing here produces a certificate from an export: the
-  example's is written by hand. Whether Con-Leche's checker and Lean4Lean's theory accept the same
-  environments is not addressed.
+- **The generator is partial.** It leaves out a constant whose type has a `let`, a literal or a
+  projection, or that `inferType` can't type without reduction, or whose level parameter names
+  repeat, and with it every later constant that mentions it; evaluating `(generated cenv).names`
+  lists what it kept. It was run on the example's export only. The generated environment holds an
+  equation only where a constant of the accepted environment has it as its type, `@Eq T a b`: a
+  definition's unfolding and a recursor's computation rule are not added from the checker's
+  reduction. Whether Con-Leche's checker and Lean4Lean's theory accept the same environments is
+  not addressed.
 - **The result is a Lean theorem with a hypothesis.** `OmegaInaccessibles` is assumed, over
   Mathlib's `ZFSet`. No theorem of first-order set theory about an encoding of the type theory is
   derived from it.
@@ -155,9 +179,11 @@ Lake does not track the example's data files: after changing one, change
 | `Lean4Zfc/Built.lean` | `Built`, `Built.consistent` |
 | `Lean4Zfc/Bridge.lean` | The translation into Con-Leche's terms, `CertOrdered`, `CertOrdered.consistent` |
 | `Lean4Zfc/Checked.lean` | `checked_consistent` |
-| `Lean4Zfc/Example/` | The certified example and its data |
+| `Lean4Zfc/Infer.lean` | `inferType`, `inferType_sound` |
+| `Lean4Zfc/Generate.lean` | `generate`, `generate_certOrdered`, `generated_consistent` |
+| `Lean4Zfc/Example/` | The example, certified by hand and by the generator, and its data |
 | `Lean4ZfcTest/` | The axioms of each theorem, pinned: a `sorry` reaching one fails the build; the rejected false export; `badEnv_wf` |
-| `inaccessibles/` | A Lake package of its own, the only part that needs Mathlib: the two theorems above |
+| `inaccessibles/` | A Lake package of its own, the only part that needs Mathlib: the theorems above |
 | `patches/` | The changes that build Lean4Lean's theory at Lean v4.35.0 |
 
 ## Building
@@ -178,7 +204,7 @@ Then, with Lean v4.35.0 installed through Elan:
 
 ```sh
 lake build                       # the library, the example and their axiom checks
-cd inaccessibles && lake build   # the two theorems under inaccessible cardinals
+cd inaccessibles && lake build   # the theorems under inaccessible cardinals
 ```
 
 The second build needs Mathlib at its tag `v4.35.0`; `inaccessibles/lake-manifest.json` pins the
