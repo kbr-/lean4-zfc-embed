@@ -2,18 +2,28 @@
 
 A Lean proof that the type theory of Lean 4, as [Lean4Lean](https://github.com/digama0/lean4lean)
 formalizes it, has a sound interpretation in set theory, so that an environment with a model proves
-no falsity; and that two families of environments have a model, assuming a sequence of inaccessible
-cardinals: those built from definitions, and those certified against a run of a checker. A certified
-environment and its certificate are computed from the checker's result by a function proved correct;
-it holds the constants that function can type, which can be fewer than the checker's. The sets are
-any model of the set theory of [Con-Leche](https://github.com/leanprover/con-leche); under the
-cardinal hypothesis Con-Leche builds one on Mathlib's type `ZFSet` of sets.
+no falsity: no closed term has the type `∀ (p : Prop), p`. Its parts:
 
-Both packages build with Lean v4.35.0, the one under `inaccessibles/` against an existing build of
-Mathlib and not from a fresh clone, and the general theorems depend on no axiom beyond `propext`,
-`Classical.choice` and `Quot.sound`. Read the section Limits before citing a result: the theorems
-are about Lean4Lean's theory and about environments built from definitions or certified against a
-checker's run, and say nothing of the official kernel.
+- **Soundness.** Each term is read as a set, and each rule of the theory is shown to hold of those
+  sets. A model of an environment gives each constant a set that belongs to its type and makes the
+  two sides of each stored equation the same set.
+- **Models.** Two families of environments have a model, assuming a sequence of inaccessible
+  cardinals: those built from definitions, and those certified against a run of a checker. The
+  checker is [Con-Leche](https://github.com/leanprover/con-leche)'s, which accepts inductive types,
+  the quotient constants and the axioms `propext` and `Classical.choice`.
+- **Certificates.** A certified environment and its certificate are computed from the checker's
+  result by a function proved correct; it holds the constants that function can type, which can be
+  fewer than the checker's.
+
+The sets are any model of the set theory of Con-Leche; under the cardinal hypothesis Con-Leche
+builds one on Mathlib's type `ZFSet` of sets.
+
+Both packages build with Lean v4.35.0, and each theorem their `Axioms.lean` test modules pin depends
+on no axiom beyond `propext`, `Classical.choice` and `Quot.sound`. The steps under Building were
+followed in a fresh clone, the second package against a Mathlib already built on the machine; a
+build that downloads Mathlib was not run. Read the section Limits before citing a result: the
+theorems are about Lean4Lean's theory and about environments built from definitions or certified
+against a checker's run, and say nothing of the official kernel.
 
 ## What is proved
 
@@ -172,17 +182,19 @@ Lake does not track the example's data files: after changing one, change
   `(generated cenv).names` lists what it kept. It accepts an argument whose type and the function's
   domain are equal, step one to the other, are both `∀` with parts that are, or are sorts at levels
   of equal value under every assignment, and knows no η, no proof irrelevance and no recursor rule.
-  Run on the 580 export fixtures of Con-Leche's `tests/e2e/` (`lake exe reach --measure`, which
-  abandons a file with no result after five seconds), this repository's run of the checker accepted
-  338, did not accept 240 and gave no answer on 2. On 328 of the accepted the generator finished,
-  and of the 20764 constants of those environments, each count including the prelude's, it kept
-  20544, keeping 253 environments whole and storing 4870 equations; the totals are sums over the
-  lines `reach` prints. On the other ten, among them `tower_beqpair`, which Con-Leche's own binary
-  accepts at once, the generator did not finish within five seconds; how long it takes there was not
-  measured. The generated environment holds an equation only where a constant of the accepted
-  environment has it as its type, `@Eq T a b`, or where it unfolds a kept definition whose value
-  `infer` types at the definition's type: a recursor's computation rule is not added. Whether
-  Con-Leche's checker and Lean4Lean's theory accept the same environments is not addressed.
+  Run on the 580 export fixtures of Con-Leche's `tests/e2e/` (`lake exe reach --measure`, here with
+  a limit of thirty seconds a file), this repository's run of the checker accepted 338, did not
+  accept 240 and gave no answer on 2. On 328 of the accepted the generator finished, and of the
+  20764 constants of those environments, each count including the prelude's, it kept 20544, keeping
+  253 environments whole and storing 4870 equations; the totals are sums over the lines `reach`
+  prints. On the other ten, among them `tower_beqpair`, which Con-Leche's own binary accepts at
+  once, the generator did not finish within thirty seconds; how long it takes there was not
+  measured. The limit is far above the slowest file that finishes, about eleven seconds on a loaded
+  machine, so the totals do not depend on the machine's speed. The generated environment holds an
+  equation only where a constant of the accepted environment has it as its type, `@Eq T a b`, or
+  where it unfolds a kept definition whose value `infer` types at the definition's type: a
+  recursor's computation rule is not added. Whether Con-Leche's checker and Lean4Lean's theory
+  accept the same environments is not addressed.
 - **The result is a Lean theorem with a hypothesis.** `OmegaInaccessibles` is assumed, over
   Mathlib's `ZFSet`. No theorem of first-order set theory about an encoding of the type theory is
   derived from it.
@@ -194,6 +206,7 @@ Lake does not track the example's data files: after changing one, change
 
 | Path | Holds |
 |---|---|
+| `Lean4Zfc.lean` | The root module: the general theorems, without the example |
 | `Lean4Zfc/Interp.lean` | The interpretation and its substitution lemmas |
 | `Lean4Zfc/Fundamental.lean` | `EnvModel`, `fundamental`, `no_proof_of_false` |
 | `Lean4Zfc/Falsity.lean` | `falseE_isType`, `badEnv_proves_false`, `badEnv_no_model` |
@@ -231,6 +244,14 @@ Then, with Lean v4.35.0 installed through Elan:
 ```sh
 lake build                       # the library, the example and their axiom checks
 cd inaccessibles && lake build   # the theorems under inaccessible cardinals
+```
+
+To measure the generator on Con-Leche's export fixtures, as the section Limits reports (it runs each
+file under the coreutils command `timeout`):
+
+```sh
+lake exe reach --measure ../lean4-zfc-sources/con-leche/tests/e2e 30 8 > reach.tsv
+lake exe reach --summary reach.tsv
 ```
 
 The second build needs Mathlib at its tag `v4.35.0`; `inaccessibles/lake-manifest.json` pins the
