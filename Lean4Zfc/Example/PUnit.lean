@@ -66,7 +66,7 @@ theorem certConst_of_check {cenv : ConLeche.Env} {lp : Lean.Name → List ConLec
   · rename_i ci hf
     simp only [Bool.and_eq_true, decide_eq_true_eq] at h
     obtain ⟨⟨⟨⟨h1, h2⟩, h3⟩, h4⟩, h5⟩ := h
-    exact ⟨ci, List.mem_of_find?_eq_some hf, hf, h1, h2, h3, h4, h5⟩
+    exact ⟨ci, List.mem_of_find?_eq_some hf, hf, h1, h2, h3, h4, h5 ▸ .refl _⟩
   · cases h
 
 /-- A computable check of the certificate of a stored equation. -/
@@ -81,13 +81,13 @@ def eqCheck (cenv : ConLeche.Env) (c : ConLeche.Name) (ps : List ConLeche.Name) 
 theorem cert_of_eqCheck {cenv : ConLeche.Env} {c : ConLeche.Name} {ps : List ConLeche.Name}
     {u : VLevel} {df : VDefEq} (h : eqCheck cenv c ps u df = true) :
     ∃ ci ps, ci ∈ cenv.consts ∧ ps.Nodup ∧ ps.length = df.uvars ∧
-      ci.toConstantVal.type = eqExpr ps u df.type df.lhs df.rhs := by
+      LitEq ci.toConstantVal.type (eqExpr ps u df.type df.lhs df.rhs) := by
   unfold eqCheck at h
   split at h
   · rename_i ci hf
     simp only [Bool.and_eq_true, decide_eq_true_eq] at h
     obtain ⟨⟨h1, h2⟩, h3⟩ := h
-    exact ⟨ci, ps, List.mem_of_find?_eq_some hf, h1, h2, h3⟩
+    exact ⟨ci, ps, List.mem_of_find?_eq_some hf, h1, h2, h3 ▸ .refl _⟩
   · cases h
 
 /-- The recursor's level parameter is named `u` in the export; the other constants have none. -/

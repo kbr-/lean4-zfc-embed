@@ -95,9 +95,26 @@ theorem trLevel_untrLevels {ps : List ConLeche.Name} :
       simp [trLevel_untrLevel hl, trLevel_untrLevels hls]
     · cases h
 
-/-- A Con-Leche term as a Lean4Lean term, where it has one: no free variable, `let`, literal or
-projection. -/
+/-- The largest `Nat` literal the translation expands: a literal `n` becomes `n` applications of
+`Nat.succ`, which the inferencer then walks. -/
+def litBound : Nat := 256
+
+/-- `Nat.succ` applied `n` times to `Nat.zero`. -/
+def natChain : Nat → VExpr
+  | 0 => .const (untrName ConLeche.natZeroName) []
+  | k + 1 => .app (.const (untrName ConLeche.natSuccName) []) (natChain k)
+
+theorem litEq_natChain : ∀ (ps : List ConLeche.Name) (n : Nat),
+    LitEq (.lit (.natVal n)) (trExpr ps (natChain n))
+  | ps, 0 => .natLit (by simp [ConLeche.natLitToConstructor, natChain, trExpr, trName_untrName]; exact .refl _)
+  | ps, k + 1 => .natLit (by
+      simp only [ConLeche.natLitToConstructor, natChain, trExpr, trName_untrName, List.map_nil]
+      exact .app (.refl _) (litEq_natChain ps k))
+
+/-- A Con-Leche term as a Lean4Lean term, where it has one: no free variable, `let`, projection,
+string literal or `Nat` literal above `litBound`. -/
 def untrExpr (ps : List ConLeche.Name) : ConLeche.Expr → Option VExpr
+  | .lit (.natVal n) => if n ≤ litBound then some (natChain n) else none
   | .bvar i => some (.bvar i)
   | .sort u => (untrLevel ps u).map .sort
   | .const n us => (untrLevels ps us).map (.const (untrName n))
@@ -115,41 +132,49 @@ def untrExpr (ps : List ConLeche.Name) : ConLeche.Expr → Option VExpr
     | _, _ => none
   | _ => none
 
+/-- Translating back gives the term, up to `Nat` literals written as constructor chains. -/
 theorem trExpr_untrExpr {ps : List ConLeche.Name} :
-    ∀ {e : ConLeche.Expr} {v : VExpr}, untrExpr ps e = some v → trExpr ps v = e
-  | .bvar i, _, h => by cases h; rfl
+    ∀ {e : ConLeche.Expr} {v : VExpr}, untrExpr ps e = some v → LitEq e (trExpr ps v)
+  | .bvar i, _, h => by cases h; exact .refl _
   | .sort u, v, h => by
     simp only [untrExpr, Option.map_eq_some_iff] at h
     obtain ⟨l, hl, rfl⟩ := h
-    simp [trExpr, trLevel_untrLevel hl]
+    simp only [trExpr, trLevel_untrLevel hl]
+    exact .refl _
   | .const n us, v, h => by
     simp only [untrExpr, Option.map_eq_some_iff] at h
     obtain ⟨ls, hls, rfl⟩ := h
-    simp [trExpr, trName_untrName, trLevel_untrLevels hls]
+    simp only [trExpr, trName_untrName, trLevel_untrLevels hls]
+    exact .refl _
   | .app f a, v, h => by
     simp only [untrExpr] at h
     split at h
     · rename_i f' a' hf ha
       cases h
-      simp [trExpr, trExpr_untrExpr hf, trExpr_untrExpr ha]
+      exact .app (trExpr_untrExpr hf) (trExpr_untrExpr ha)
     · cases h
   | .lam A b, v, h => by
     simp only [untrExpr] at h
     split at h
     · rename_i A' b' hA hb
       cases h
-      simp [trExpr, trExpr_untrExpr hA, trExpr_untrExpr hb]
+      exact .lam (trExpr_untrExpr hA) (trExpr_untrExpr hb)
     · cases h
   | .forallE A B, v, h => by
     simp only [untrExpr] at h
     split at h
     · rename_i A' B' hA hB
       cases h
-      simp [trExpr, trExpr_untrExpr hA, trExpr_untrExpr hB]
+      exact .forallE (trExpr_untrExpr hA) (trExpr_untrExpr hB)
     · cases h
+  | .lit (.natVal n), v, h => by
+    simp only [untrExpr] at h
+    split at h
+    · cases h; exact litEq_natChain ps n
+    · cases h
+  | .lit (.strVal _), _, h => by simp [untrExpr] at h
   | .fvar _ _, _, h => by simp [untrExpr] at h
   | .letE _ _ _, _, h => by simp [untrExpr] at h
-  | .lit _, _, h => by simp [untrExpr] at h
   | .proj _ _ _, _, h => by simp [untrExpr] at h
 
 /-- Each constant's level parameter names, read from the checker's environment. -/
@@ -277,7 +302,7 @@ theorem stepConst_good {cenv : ConLeche.Env} {g g' : Generated} {ci : ConLeche.C
             · exact hlp.symm
             · rw [hlp]; exact hnd
             · rw [hlp]
-            · rw [hlp]; exact (trExpr_untrExpr hty).symm
+            · rw [hlp]; exact trExpr_untrExpr hty
           · intro n hn
             rw [hconst]
             simp only
@@ -311,7 +336,7 @@ theorem stepEq_good {cenv : ConLeche.Env} {g g' : Generated} {ci : ConLeche.Cons
             (sortOf_sound hg.eqs hT) ⟨ci, _, hmem, hnd, rfl, ?_⟩
           have := trExpr_untrExpr hty
           subst hc
-          simpa [trExpr, eqExpr, trName_untrName] using this.symm
+          simpa [trExpr, eqExpr, trName_untrName] using this
         · intro n hn
           exact hg.names n hn
         · intro df hdf
@@ -336,8 +361,8 @@ theorem stepDelta_good {cenv : ConLeche.Env} {g g' : Generated} {ci : ConLeche.C
           obtain ⟨h1, h2⟩ := hcond
           cases h
           refine ⟨.delta hg.cert hc ⟨infer_sound hg.eqs h2, infer_sound hg.eqs h1⟩
-            ⟨cv, hint, ?_, (trName_untrName _).symm⟩, fun n hn => hg.names n hn, ?_⟩
-          · rw [trExpr_untrExpr hv]; exact hmem
+            ⟨cv, value, hint, hmem, (trName_untrName _).symm, trExpr_untrExpr hv⟩,
+            fun n hn => hg.names n hn, ?_⟩
           · intro df hdf
             cases hdf with
             | head => exact Or.inl rfl

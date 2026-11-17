@@ -97,6 +97,64 @@ def trExpr (ps : List ConLeche.Name) : VExpr → ConLeche.Expr
   | .lam A b => .lam (trExpr ps A) (trExpr ps b)
   | .forallE A B => .forallE (trExpr ps A) (trExpr ps B)
 
+/-- `e` is `e'` with some of its chains `Nat.succ (… Nat.zero)` written as `Nat` literals: the
+form a translated term takes when the stored one holds literals, which Lean4Lean's terms lack. -/
+inductive LitEq : ConLeche.Expr → ConLeche.Expr → Prop
+  | refl (e : ConLeche.Expr) : LitEq e e
+  | app {f f' a a' : ConLeche.Expr} : LitEq f f' → LitEq a a' → LitEq (.app f a) (.app f' a')
+  | lam {A A' b b' : ConLeche.Expr} : LitEq A A' → LitEq b b' → LitEq (.lam A b) (.lam A' b')
+  | forallE {A A' b b' : ConLeche.Expr} :
+    LitEq A A' → LitEq b b' → LitEq (.forallE A b) (.forallE A' b')
+  | natLit {n : Nat} {e' : ConLeche.Expr} :
+    LitEq (ConLeche.natLitToConstructor n) e' → LitEq (.lit (.natVal n)) e'
+
+/-- Related terms denote the same: Con-Leche reads a literal as its constructor form. -/
+theorem LitEq.denotes {cval : ConLeche.Name → (ConLeche.Name → Nat) → V} {cenv : ConLeche.Env}
+    {φ : ConLeche.Name → Nat} {e e' : ConLeche.Expr} (h : LitEq e e') :
+    ∀ {ρ : Nat → V} {X : V}, ConLeche.Denotes cval cenv φ ρ e' X →
+      ConLeche.Denotes cval cenv φ ρ e X := by
+  induction h with
+  | refl => exact id
+  | app _ _ ihf iha =>
+    intro ρ X hd
+    cases hd with
+    | app hf ha => exact .app (ihf hf) (iha ha)
+  | lam _ _ ihA ihb =>
+    intro ρ X hd
+    cases hd with
+    | lam hA hF => exact .lam (ihA hA) fun x hx => ihb (hF x hx)
+  | forallE _ _ ihA ihb =>
+    intro ρ X hd
+    cases hd with
+    | pi hA hB => exact .pi (ihA hA) fun x hx => ihb (hB x hx)
+  | natLit _ ih =>
+    intro ρ X hd
+    exact .natLit (ih hd)
+
+/-- The converse direction. -/
+theorem LitEq.denotes_rev {cval : ConLeche.Name → (ConLeche.Name → Nat) → V}
+    {cenv : ConLeche.Env} {φ : ConLeche.Name → Nat} {e e' : ConLeche.Expr} (h : LitEq e e') :
+    ∀ {ρ : Nat → V} {X : V}, ConLeche.Denotes cval cenv φ ρ e X →
+      ConLeche.Denotes cval cenv φ ρ e' X := by
+  induction h with
+  | refl => exact id
+  | app _ _ ihf iha =>
+    intro ρ X hd
+    cases hd with
+    | app hf ha => exact .app (ihf hf) (iha ha)
+  | lam _ _ ihA ihb =>
+    intro ρ X hd
+    cases hd with
+    | lam hA hF => exact .lam (ihA hA) fun x hx => ihb (hF x hx)
+  | forallE _ _ ihA ihb =>
+    intro ρ X hd
+    cases hd with
+    | pi hA hB => exact .pi (ihA hA) fun x hx => ihb (hB x hx)
+  | natLit _ ih =>
+    intro ρ X hd
+    cases hd with
+    | natLit h => exact ih h
+
 omit [ConLeche.SetTheory V] in
 theorem conLeche_push (x : V) (ρ : Nat → V) : ConLeche.push x ρ = push x ρ := by
   funext i
@@ -116,7 +174,7 @@ def CertConst (cenv : ConLeche.Env) (lp : Lean.Name → List ConLeche.Name) (c :
     (vc : VConstant) : Prop :=
   ∃ ci, ci ∈ cenv.consts ∧ cenv.find? (trName c) = some ci ∧ ci.name = trName c ∧
     ci.toConstantVal.levelParams = lp c ∧ (lp c).Nodup ∧ (lp c).length = vc.uvars ∧
-    ci.toConstantVal.type = trExpr (lp c) vc.type
+    LitEq ci.toConstantVal.type (trExpr (lp c) vc.type)
 
 /-- A constant's value reads only its own level parameters. -/
 def ParamsOnly (M : ConLeche.Model V cenv) : Prop :=
@@ -193,8 +251,8 @@ inductive CertOrdered (cenv : ConLeche.Env) (lp : Lean.Name → List ConLeche.Na
     VEnv → Prop where
   | delta {env : VEnv} {c : Lean.Name} {vc : VConstant} {v : VExpr} :
     CertOrdered cenv lp env → env.constants c = some vc → (unfoldEq c vc v).WF env →
-    (∃ cv hint, ConLeche.ConstantInfo.defnInfo cv (trExpr (lp c) v) hint ∈ cenv.consts ∧
-      cv.name = trName c) →
+    (∃ cv value hint, ConLeche.ConstantInfo.defnInfo cv value hint ∈ cenv.consts ∧
+      cv.name = trName c ∧ LitEq value (trExpr (lp c) v)) →
     CertOrdered cenv lp (env.addDefEq (unfoldEq c vc v))
   | empty : CertOrdered cenv lp .empty
   | const {env env' : VEnv} {n : Lean.Name} {ci : VConstant} :
@@ -203,7 +261,7 @@ inductive CertOrdered (cenv : ConLeche.Env) (lp : Lean.Name → List ConLeche.Na
   | defeq {env : VEnv} {df : VDefEq} {u : VLevel} :
     CertOrdered cenv lp env → df.WF env → env.HasType df.uvars [] df.type (.sort u) →
     (∃ ci ps, ci ∈ cenv.consts ∧ ps.Nodup ∧ ps.length = df.uvars ∧
-      ci.toConstantVal.type = eqExpr ps u df.type df.lhs df.rhs) →
+      LitEq ci.toConstantVal.type (eqExpr ps u df.type df.lhs df.rhs)) →
     CertOrdered cenv lp (env.addDefEq df)
 
 variable {lp : Lean.Name → List ConLeche.Name}
@@ -242,11 +300,11 @@ theorem CertOrdered.constMem {env : VEnv} (h : CertOrdered cenv lp env)
     cvalOf M lp c L ∈ˢ interp (cvalOf M lp) L ρ vc.type := by
   obtain ⟨ci, hmem, _, hname, _, hnd, hlen, hty⟩ := h.certConst hc
   obtain ⟨T, hT, hin⟩ := M.mem ci hmem (assign (lp c) L) ρ
-  rw [hty] at hT
   obtain ⟨_, hC, _⟩ := (Ordered.constsIn h.ordered).1 hc
   obtain ⟨_, hty'⟩ := h.ordered.constWF hc
   have hlw : vc.type.LevelWF (lp c).length := hlen ▸ (VEnv.IsDefEq.levelWF hty' trivial).1
-  have := ConLeche.Denotes_functional hT (denotes_tr M hpar h.certConst hnd hC hlw L ρ)
+  have := ConLeche.Denotes_functional hT
+    (hty.denotes (denotes_tr M hpar h.certConst hnd hC hlw L ρ))
   subst this
   rw [hname] at hin
   exact hin
@@ -266,12 +324,12 @@ theorem CertOrdered.envModel {env : VEnv} (h : CertOrdered cenv lp env)
       have hT2 := constsIn_of_isDefEq (Ordered.constsIn hord) hwf.2 (by simp)
       have hL2 := VEnv.IsDefEq.levelWF hwf.2 trivial
       obtain ⟨ci, _, hf, _, hps, hnd, hlen, _⟩ := hprev.certConst hc
-      obtain ⟨cv, hint, hmemd, hcvn⟩ := hcert
+      obtain ⟨cv, value, hint, hmemd, hcvn, hlit⟩ := hcert
       have hlw : v.LevelWF (lp c).length := hlen ▸ hL2.1
-      have hd1 := hdl cv _ hint hmemd (assign (lp c) L) ρ
-      have hd2 : ConLeche.Denotes M.cval cenv (assign (lp c) L) ρ (trExpr (lp c) v)
+      have hd1 := hdl cv value hint hmemd (assign (lp c) L) ρ
+      have hd2 : ConLeche.Denotes M.cval cenv (assign (lp c) L) ρ value
           (interp (cvalOf M lp) L ρ v) :=
-        denotes_tr M hpar hprev.certConst hnd hT2.1 hlw L ρ
+        hlit.denotes (denotes_tr M hpar hprev.certConst hnd hT2.1 hlw L ρ)
       have e1 : M.cval cv.name (assign (lp c) L) = interp (cvalOf M lp) L ρ v := by
         first
           | exact ConLeche.Denotes_functional hd1 hd2
@@ -312,7 +370,7 @@ theorem CertOrdered.envModel {env : VEnv} (h : CertOrdered cenv lp env)
       simp only [interp] at hTm
       rw [← eval_trLevel hnd L hLu] at hTm
       obtain ⟨X, hX, hin⟩ := M.mem ci hmem (assign ps L) ρ
-      rw [hty] at hX
+      replace hX := hty.denotes_rev hX
       unfold eqExpr at hX
       cases hX with
       | app hf3 hb' =>
