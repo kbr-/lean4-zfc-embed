@@ -8,8 +8,11 @@ heads have a type that is a sort or a function type only after unfolding constan
 redexes. Each step it takes is one rule of Lean4Lean's judgement applied to types the function has
 itself inferred and compared syntactically: a stored unfolding from the list `eqs` (`extra`), a
 contraction (`beta`), a step under an application (`appDF`), a chain of steps at one sort (`trans`),
-and the retyping of a term at a converted type (`defeqDF`). No inversion lemma and no unique typing
-is used.
+and the retyping of a term at a converted type (`defeqDF`). An argument is accepted at a function's
+domain when `conv` relates its type to the domain: the two are equal, one steps to the other
+(`symm` for the reverse direction), both are `∀` with domains and bodies `conv` relates
+(`forallEDF`), or both are sorts at levels of equal value (`sortDF`, by `Lean4Zfc/Level.lean`). No
+inversion lemma and no unique typing is used.
 
 Conversion calls inference on terms that are not subterms, so everything runs on fuel.
 `infer_sound` holds for every fuel: a result is a typing in the judgement, given that the
