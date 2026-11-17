@@ -13,19 +13,24 @@ depend on it.
 
 open Lean4Zfc
 
-/-- The report line for one export's text. -/
-def reachLine (path text : String) : String :=
+/-- The report for one export's text, to follow the file's name on its line. -/
+def reachReport (text : String) : String :=
   match Example.PUnit.runOn text with
-  | .error _ => s!"{path}\tnot accepted"
+  | .error _ => "not accepted"
   | .ok cenv =>
     let g := generated cenv
     let all := cenv.consts.map (fun ci => untrName ci.name)
     let dropped := all.reverse.filter (fun n => !g.names.contains n)
-    s!"{path}\tconstants {all.length}\tkept {g.names.length}\tequations {g.eqs.length}" ++
+    s!"constants {all.length}\tkept {g.names.length}\tequations {g.eqs.length}" ++
       s!"\tfirst left out {dropped.take 5}"
 
+/-- Each file's name is written before its export is read, so a run that does not finish names
+the file it stopped on. -/
 def main (args : List String) : IO Unit := do
+  let out ← IO.getStdout
   for path in args do
+    out.putStr s!"{path}\t"
+    out.flush
     let text ← IO.FS.readFile path
-    IO.println (reachLine path text)
-    (← IO.getStdout).flush
+    out.putStrLn (reachReport text)
+    out.flush
