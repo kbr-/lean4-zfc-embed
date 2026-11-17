@@ -58,9 +58,7 @@ def infer (env : VEnv) (eqs : List VDefEq) (U : Nat) : Nat → List VExpr → VE
     | some Tf, some A' =>
       match whnfTy env eqs U n Γ Tf with
       | some (.forallE A B) =>
-        if A = A' ∨ (stepsTo env eqs U n Γ A A').isSome ∨ (stepsTo env eqs U n Γ A' A).isSome then
-          some (B.inst a)
-        else none
+        if A = A' ∨ conv env eqs U n Γ A' A = true then some (B.inst a) else none
       | _ => none
     | _, _ => none
   | n + 1, Γ, .lam A b =>
@@ -108,6 +106,21 @@ def chase (env : VEnv) (eqs : List VDefEq) (U : Nat) :
       match red env eqs U n Γ T with
       | some (T', S) => if S = .sort s then chase env eqs U n Γ T' s else none
       | none => none
+
+/-- `T` and `T'` are definitionally equal at some sort: equal and a type, one stepping to the
+other, or both `∀` with domains and bodies that are. -/
+def conv (env : VEnv) (eqs : List VDefEq) (U : Nat) :
+    Nat → List VExpr → VExpr → VExpr → Bool
+  | 0, _, _, _ => false
+  | n + 1, Γ, T, T' =>
+    if T = T' then (sortOf env eqs U n Γ T).isSome
+    else if (stepsTo env eqs U n Γ T T').isSome then true
+    else if (stepsTo env eqs U n Γ T' T).isSome then true
+    else
+      match T, T' with
+      | .forallE A B, .forallE A' B' =>
+        conv env eqs U n Γ A A' && conv env eqs U n (A :: Γ) B B'
+      | _, _ => false
 
 /-- Some level `s` when `T` steps to `target` at the sort `s`, every step at that sort. -/
 def stepsTo (env : VEnv) (eqs : List VDefEq) (U : Nat) :
@@ -164,6 +177,7 @@ structure Sound (env : VEnv) (eqs : List VDefEq) (U : Nat) (n : Nat) : Prop wher
     ∃ s', env.IsDefEq U Γ T target (.sort s')
   stepsToAt : ∀ {Γ T target s r}, stepsToAt env eqs U n Γ T target s = some r →
     env.IsDefEq U Γ T target (.sort s)
+  conv : ∀ {Γ T T'}, conv env eqs U n Γ T T' = true → ∃ s, env.IsDefEq U Γ T T' (.sort s)
 
 /-- Retyping at a converted type. -/
 theorem retype {env : VEnv} {U : Nat} {Γ : List VExpr} {e T T' : VExpr}
@@ -176,11 +190,11 @@ theorem retype {env : VEnv} {U : Nat} {Γ : List VExpr} {e T T' : VExpr}
 theorem sound {env : VEnv} {eqs : List VDefEq} {U : Nat}
     (heqs : ∀ df ∈ eqs, env.defeqs df) : ∀ n, Sound env eqs U n
   | 0 => by
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> intros <;> rename_i h <;>
-      simp [infer, sortOf, whnfTy, chase, red, stepsTo, stepsToAt] at h
+    refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> intros <;> rename_i h <;>
+      simp [infer, sortOf, whnfTy, chase, red, stepsTo, stepsToAt, conv] at h
   | n + 1 => by
     have ih : Sound env eqs U n := sound heqs n
-    refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+    refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
     · intro Γ e A h
       cases e with
       | bvar i => exact .bvar (lookupTy_sound (by simpa [infer] using h))
@@ -210,14 +224,10 @@ theorem sound {env : VEnv} {eqs : List VDefEq} {U : Nat}
             split at h
             · rename_i hc
               cases h
-              rcases hc with heq | h1 | h2
+              rcases hc with heq | hc
               · subst heq
                 exact VEnv.HasType.app hF hA
-              · obtain ⟨s, hs⟩ := Option.isSome_iff_exists.1 h1
-                obtain ⟨s', hd⟩ := ih.stepsTo hs
-                exact VEnv.HasType.app hF (.defeqDF (.symm hd) hA)
-              · obtain ⟨s, hs⟩ := Option.isSome_iff_exists.1 h2
-                obtain ⟨s', hd⟩ := ih.stepsTo hs
+              · obtain ⟨s, hd⟩ := ih.conv hc
                 exact VEnv.HasType.app hF (.defeqDF hd hA)
             · cases h
           · cases h
@@ -319,6 +329,28 @@ theorem sound {env : VEnv} {eqs : List VDefEq} {U : Nat}
           · exact .trans (ih.red hr) (ih.stepsToAt h)
         · cases h
       · cases h
+    · intro Γ T T' h
+      simp only [conv] at h
+      split at h
+      · rename_i heq
+        subst heq
+        obtain ⟨u, hu⟩ := Option.isSome_iff_exists.1 h
+        exact ⟨u, ih.sortOf hu⟩
+      · split at h
+        · rename_i _ h1
+          obtain ⟨s, hs⟩ := Option.isSome_iff_exists.1 h1
+          exact ih.stepsTo hs
+        · split at h
+          · rename_i _ _ h2
+            obtain ⟨s, hs⟩ := Option.isSome_iff_exists.1 h2
+            obtain ⟨s', hd⟩ := ih.stepsTo hs
+            exact ⟨s', .symm hd⟩
+          · split at h
+            · simp only [Bool.and_eq_true] at h
+              obtain ⟨u, hu⟩ := ih.conv h.1
+              obtain ⟨v, hv⟩ := ih.conv h.2
+              exact ⟨_, .forallEDF hu hv⟩
+            · cases h
 
 /-- What `infer` returns is a type of the term in Lean4Lean's judgement, whatever the fuel. -/
 theorem infer_sound {env : VEnv} {eqs : List VDefEq} {U : Nat}
