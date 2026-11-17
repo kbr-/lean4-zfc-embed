@@ -13,10 +13,10 @@ depend on it.
 
 open Lean4Zfc
 
-/-- Which of the generator's conditions the constant `ci` fails in the environment `env`. For the
-first constant left out, `env` may be the whole generated environment: the constants before it
-were all kept, and its type mentions none after it. -/
-def whyLeftOut (cenv : ConLeche.Env) (env : Lean4Lean.VEnv) (ci : ConLeche.ConstantInfo) :
+/-- Which of the generator's conditions the constant `ci` fails in the generated state `g`. For
+the first constant left out, `g` may be the final state: the constants before it were all kept,
+and its type mentions none after it. -/
+def whyLeftOut (cenv : ConLeche.Env) (g : Generated) (ci : ConLeche.ConstantInfo) :
     String :=
   if cenv.find? ci.name ≠ some ci then "another constant bears its name"
   else if ¬ ci.toConstantVal.levelParams.Nodup then "its level parameter names repeat"
@@ -24,10 +24,9 @@ def whyLeftOut (cenv : ConLeche.Env) (env : Lean4Lean.VEnv) (ci : ConLeche.Const
     match untrExpr ci.toConstantVal.levelParams ci.toConstantVal.type with
     | none => "its type has a let, a literal, a projection or a free variable"
     | some ty =>
-      match inferType env ci.toConstantVal.levelParams.length [] ty with
-      | none => "its type is not typed without reduction"
-      | some (.sort _) => "its name is taken"
-      | some _ => "its type's type is not literally a sort"
+      match sortOf g.env g.eqs ci.toConstantVal.levelParams.length fuel [] ty with
+      | none => "the inferencer does not type its type at a sort"
+      | some _ => "its name is taken"
 
 /-- The report for the environment the checker returned. -/
 def generatedReport (cenv : ConLeche.Env) : String :=
@@ -35,7 +34,7 @@ def generatedReport (cenv : ConLeche.Env) : String :=
   let dropped := cenv.consts.reverse.filter (fun ci => !g.names.contains (untrName ci.name))
   let why := match dropped with
     | [] => ""
-    | ci :: _ => s!"\tthe first because {whyLeftOut cenv g.env ci}"
+    | ci :: _ => s!"\tthe first because {whyLeftOut cenv g ci}"
   s!"constants {cenv.consts.length}\tkept {g.names.length}\tequations {g.eqs.length}" ++
     s!"\tfirst left out {(dropped.take 5).map (fun ci => untrName ci.name)}" ++ why
 

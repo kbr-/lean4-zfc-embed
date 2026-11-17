@@ -1,13 +1,13 @@
 import Lean4Zfc.Checked
-import Lean4Zfc.Infer
+import Lean4Zfc.Convert
 
 /-!
 A certified Lean4Lean environment computed from the environment Con-Leche's checker returns.
 
 `generate cenv` walks the checker's constants, oldest first. A constant enters the Lean4Lean
-environment when its type translates back to a Lean4Lean term and `inferType` types that term at a
+environment when its type translates back to a Lean4Lean term and `sortOf` types that term at a
 sort in the environment built so far. A constant whose type is `@Eq T a b`, with `a` and `b` typed
-at `T` by `inferType`, also adds the stored equation `a ≡ b : T`. Everything else is left out, and
+at `T` by `infer`, also adds the stored equation `a ≡ b : T`. Everything else is left out, and
 so, by failing to type, is every later constant that mentions something left out.
 
 `generate_certOrdered` proves the result certified against `cenv`, with no hypothesis, so
@@ -164,14 +164,17 @@ structure Generated where
   names : List Lean.Name
   eqs : List VDefEq
 
+/-- The fuel the generator gives each inference: a bound on its depth, a failure when it runs out. -/
+def fuel : Nat := 4096
+
 /-- Add the checker's constant `ci`, if its type translates back and is typed at a sort. -/
 def stepConst (cenv : ConLeche.Env) (g : Generated) (ci : ConLeche.ConstantInfo) :
     Option Generated :=
   if cenv.find? ci.name = some ci ∧ ci.toConstantVal.levelParams.Nodup then
     match untrExpr ci.toConstantVal.levelParams ci.toConstantVal.type with
     | some ty =>
-      match inferType g.env ci.toConstantVal.levelParams.length [] ty with
-      | some (.sort _) =>
+      match sortOf g.env g.eqs ci.toConstantVal.levelParams.length fuel [] ty with
+      | some _ =>
         match g.env.addConst (untrName ci.name) ⟨ci.toConstantVal.levelParams.length, ty⟩ with
         | some env' => some ⟨env', untrName ci.name :: g.names, g.eqs⟩
         | none => none
@@ -187,9 +190,9 @@ def stepEq (cenv : ConLeche.Env) (g : Generated) (ci : ConLeche.ConstantInfo) :
     match untrExpr ci.toConstantVal.levelParams ci.toConstantVal.type with
     | some (.app (.app (.app (.const c [u]) T) a) b) =>
       if c = untrName ConLeche.eqName ∧
-          inferType g.env ci.toConstantVal.levelParams.length [] T = some (.sort u) ∧
-          inferType g.env ci.toConstantVal.levelParams.length [] a = some T ∧
-          inferType g.env ci.toConstantVal.levelParams.length [] b = some T then
+          sortOf g.env g.eqs ci.toConstantVal.levelParams.length fuel [] T = some u ∧
+          infer g.env g.eqs ci.toConstantVal.levelParams.length fuel [] a = some T ∧
+          infer g.env g.eqs ci.toConstantVal.levelParams.length fuel [] b = some T then
         some ⟨g.env.addDefEq ⟨ci.toConstantVal.levelParams.length, a, b, T⟩, g.names,
           ⟨ci.toConstantVal.levelParams.length, a, b, T⟩ :: g.eqs⟩
       else none
@@ -207,8 +210,8 @@ def stepDelta (cenv : ConLeche.Env) (g : Generated) (ci : ConLeche.ConstantInfo)
       match g.env.constants (untrName cv.name),
         untrExpr (lpOf cenv (untrName cv.name)) value with
       | some vc, some v =>
-        if inferType g.env vc.uvars [] v = some vc.type ∧
-            inferType g.env vc.uvars [] (.const (untrName cv.name) (params vc.uvars)) =
+        if infer g.env g.eqs vc.uvars fuel [] v = some vc.type ∧
+            infer g.env g.eqs vc.uvars fuel [] (.const (untrName cv.name) (params vc.uvars)) =
               some vc.type then
           some ⟨g.env.addDefEq (unfoldEq (untrName cv.name) vc v), g.names,
             unfoldEq (untrName cv.name) vc v :: g.eqs⟩
@@ -267,7 +270,7 @@ theorem stepConst_good {cenv : ConLeche.Env} {g g' : Generated} {ci : ConLeche.C
             · cases hadd
             · cases hadd; rfl
           refine ⟨?_, ?_, ?_⟩
-          · refine .const hg.cert ⟨u, inferType_sound hinf⟩ hadd ?_
+          · refine .const hg.cert ⟨u, sortOf_sound hg.eqs hinf⟩ hadd ?_
             refine ⟨ci, hmem, ?_, ?_, ?_, ?_, ?_, ?_⟩
             · rw [trName_untrName]; exact hfind
             · rw [trName_untrName]
@@ -304,8 +307,8 @@ theorem stepEq_good {cenv : ConLeche.Env} {g g' : Generated} {ci : ConLeche.Cons
         obtain ⟨hc, hT, ha, hb⟩ := hcond
         cases h
         refine ⟨?_, ?_, ?_⟩
-        · refine .defeq (u := u) hg.cert ⟨inferType_sound ha, inferType_sound hb⟩
-            (inferType_sound hT) ⟨ci, _, hmem, hnd, rfl, ?_⟩
+        · refine .defeq (u := u) hg.cert ⟨infer_sound hg.eqs ha, infer_sound hg.eqs hb⟩
+            (sortOf_sound hg.eqs hT) ⟨ci, _, hmem, hnd, rfl, ?_⟩
           have := trExpr_untrExpr hty
           subst hc
           simpa [trExpr, eqExpr, trName_untrName] using this.symm
@@ -332,7 +335,7 @@ theorem stepDelta_good {cenv : ConLeche.Env} {g g' : Generated} {ci : ConLeche.C
         · rename_i hcond
           obtain ⟨h1, h2⟩ := hcond
           cases h
-          refine ⟨.delta hg.cert hc ⟨inferType_sound h2, inferType_sound h1⟩
+          refine ⟨.delta hg.cert hc ⟨infer_sound hg.eqs h2, infer_sound hg.eqs h1⟩
             ⟨cv, hint, ?_, (trName_untrName _).symm⟩, fun n hn => hg.names n hn, ?_⟩
           · rw [trExpr_untrExpr hv]; exact hmem
           · intro df hdf

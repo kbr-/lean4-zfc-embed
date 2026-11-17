@@ -9,9 +9,9 @@ The general theorems' axioms are pinned: none beyond `propext`, `Classical.choic
 the generator's two outputs.
 -/
 
-/-- info: 'Lean4Zfc.inferType_sound' depends on axioms: [propext, Quot.sound] -/
+/-- info: 'Lean4Zfc.infer_sound' depends on axioms: [propext, Quot.sound] -/
 #guard_msgs in
-#print axioms Lean4Zfc.inferType_sound
+#print axioms Lean4Zfc.infer_sound
 
 /-- info: 'Lean4Zfc.trExpr_untrExpr' depends on axioms: [propext, Quot.sound] -/
 #guard_msgs in

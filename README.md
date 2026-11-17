@@ -64,12 +64,16 @@ the inversion of sorts and two more lemmas as `sorry`, and the proof of unique t
   point.
 - `generated_consistent` (`Lean4Zfc/Generate.lean`): the environment `generate cenv`, computed from
   the accepted environment `cenv`. The generator walks the checker's constants, oldest first, and
-  adds each one whose type is a Lean4Lean term typed at a sort by `inferType`
-  (`Lean4Zfc/Infer.lean`), a type inferencer that reduces nothing and is proved sound
-  (`inferType_sound`); a constant whose type is an equation `@Eq T a b` with both sides typed at `T`
-  also adds the stored equation. A kept definition whose stored value is typed at its type also adds
-  its unfolding. `generate_certOrdered` proves the result certified, with no hypothesis, so this
-  theorem asks only the checker's acceptance.
+  adds each one whose type is a Lean4Lean term that the inferencer types at a sort; a constant whose
+  type is an equation `@Eq T a b` with both sides typed at `T` adds the stored equation, whether
+  or not the constant itself is kept. A kept
+  definition whose stored value is typed at its type also adds its unfolding. `generate_certOrdered`
+  proves the result certified, with no hypothesis, so this theorem asks only the checker's
+  acceptance. The inferencer, `infer` (`Lean4Zfc/Convert.lean`), is proved sound for every amount of
+  fuel (`infer_sound`). Where it expects a sort or a function type it converts the inferred type,
+  unfolding constants by the stored unfoldings and contracting redexes; each step is one rule of the
+  judgement applied to types it has itself inferred and compared syntactically, so it uses no
+  inversion lemma and no unique typing.
 
 **From inaccessible cardinals** (`inaccessibles/Lean4ZfcInaccessibles.lean`). The hypothesis is the
 one of the `consistency` statement in lean4lean-model, a strictly increasing sequence of
@@ -160,20 +164,20 @@ Lake does not track the example's data files: after changing one, change
 - **Nothing is said about the official kernel**, or about any checker's implementation beyond what
   Con-Leche proves of its own.
 - **The generator is partial.** It leaves out a constant whose type has a `let`, a literal or a
-  projection, or that `inferType` can't type without reduction, or whose level parameter names
-  repeat, and with it every later constant that mentions it; evaluating `(generated cenv).names`
-  lists what it kept. Run on the 580 export fixtures of Con-Leche's `tests/e2e/` (`lake exe reach`;
-  a file with no result after one second was abandoned), this repository's run of the checker
-  accepted 338, did not accept 240 and gave no answer on 2. On 328 of the accepted the generator
-  finished, and of the 20764 constants of those environments, each count including the prelude's, it
-  kept 19040, keeping 153 environments whole and storing 4539 equations; the totals are sums over
-  the lines `reach` prints. On the other ten, among them `tower_beqpair`, which Con-Leche's own
-  binary accepts at once, the generator did not finish within the second; how long it takes there
-  was not measured. The generated environment holds an equation only where a constant of the
-  accepted environment has it as its type, `@Eq T a b`, or where it unfolds a kept definition whose
-  value `inferType` types at the definition's type: a recursor's computation rule is not added, and
-  `inferType` uses no stored equation. Whether Con-Leche's checker and Lean4Lean's theory accept the
-  same environments is not addressed.
+  projection, or that `infer` can't type, or whose level parameter names repeat, and with it every
+  later constant that mentions it; evaluating `(generated cenv).names` lists what it kept. It
+  compares an argument's type with the function's domain syntactically and knows no η, no proof
+  irrelevance and no recursor rule. Run on the 580 export fixtures of Con-Leche's `tests/e2e/`
+  (`lake exe reach`; a file with no result after four seconds was abandoned), this repository's run
+  of the checker accepted 338, did not accept 240 and gave no answer on 2. On 328 of the accepted
+  the generator finished, and of the 20764 constants of those environments, each count including the
+  prelude's, it kept 19334, keeping 157 environments whole and storing 4539 equations; the totals
+  are sums over the lines `reach` prints. On the other ten, among them `tower_beqpair`, which
+  Con-Leche's own binary accepts at once, the generator did not finish within four seconds; how long
+  it takes there was not measured. The generated environment holds an equation only where a constant
+  of the accepted environment has it as its type, `@Eq T a b`, or where it unfolds a kept definition
+  whose value `infer` types at the definition's type: a recursor's computation rule is not added.
+  Whether Con-Leche's checker and Lean4Lean's theory accept the same environments is not addressed.
 - **The result is a Lean theorem with a hypothesis.** `OmegaInaccessibles` is assumed, over
   Mathlib's `ZFSet`. No theorem of first-order set theory about an encoding of the type theory is
   derived from it.
@@ -192,7 +196,8 @@ Lake does not track the example's data files: after changing one, change
 | `Lean4Zfc/Built.lean` | `Built`, `Built.consistent` |
 | `Lean4Zfc/Bridge.lean` | The translation into Con-Leche's terms, `CertOrdered`, `CertOrdered.consistent` |
 | `Lean4Zfc/Checked.lean` | `checked_consistent` |
-| `Lean4Zfc/Infer.lean` | `inferType`, `inferType_sound` |
+| `Lean4Zfc/Infer.lean` | Decidable equality of terms; a variable's type in a context |
+| `Lean4Zfc/Convert.lean` | `infer`, `sortOf`, `infer_sound`: the inferencer that converts |
 | `Lean4Zfc/Generate.lean` | `generate`, `generate_certOrdered`, `generated_consistent` |
 | `Lean4Zfc/Example/` | The example, certified by hand and by the generator, and its data |
 | `Reach.lean` | `lake exe reach FILE...`: how many constants of each export the generator keeps |
