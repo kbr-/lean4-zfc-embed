@@ -1,8 +1,10 @@
 import Lean4Zfc.Example.PUnitRun
 import Lean4Zfc.Generate
+import Lean4Zfc.Tally
 
 /-!
-`reach FILE...`: how much of each export the generator keeps.
+`reach FILE...`: how much of each export the generator keeps. `reach --summary FILE` prints the
+totals of a saved measurement (`Lean4Zfc/Tally.lean`).
 
 For each file it runs Con-Leche's checker on the export, as the example does, and, when the
 checker accepts, the generator on the checker's result. One line per file: the count of constants
@@ -62,6 +64,9 @@ def generatedReport (cenv : ConLeche.Env) : String :=
 generator starts, so a run that does not finish shows the file and the side it stopped on. -/
 def main (args : List String) : IO Unit := do
   let out ← IO.getStdout
+  if let ["--summary", file] := args then
+    out.putStrLn (tally (← IO.FS.readFile file)).render
+    return
   for path in args do
     out.putStr s!"{path}\t"
     out.flush
