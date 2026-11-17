@@ -1,4 +1,4 @@
-import Lean4Zfc.Infer
+import Lean4Zfc.Level
 
 /-!
 A type inferencer that converts where the judgement's own rules justify it.
@@ -108,7 +108,7 @@ def chase (env : VEnv) (eqs : List VDefEq) (U : Nat) :
       | none => none
 
 /-- `T` and `T'` are definitionally equal at some sort: equal and a type, one stepping to the
-other, or both `∀` with domains and bodies that are. -/
+other, both `∀` with domains and bodies that are, or two sorts at levels `levelEquiv` relates. -/
 def conv (env : VEnv) (eqs : List VDefEq) (U : Nat) :
     Nat → List VExpr → VExpr → VExpr → Bool
   | 0, _, _, _ => false
@@ -120,6 +120,7 @@ def conv (env : VEnv) (eqs : List VDefEq) (U : Nat) :
       match T, T' with
       | .forallE A B, .forallE A' B' =>
         conv env eqs U n Γ A A' && conv env eqs U n (A :: Γ) B B'
+      | .sort l, .sort l' => decide (l.WF U ∧ l'.WF U) && levelEquiv l l'
       | _, _ => false
 
 /-- Some level `s` when `T` steps to `target` at the sort `s`, every step at that sort. -/
@@ -350,6 +351,8 @@ theorem sound {env : VEnv} {eqs : List VDefEq} {U : Nat}
               obtain ⟨u, hu⟩ := ih.conv h.1
               obtain ⟨v, hv⟩ := ih.conv h.2
               exact ⟨_, .forallEDF hu hv⟩
+            · simp only [Bool.and_eq_true, decide_eq_true_eq] at h
+              exact ⟨_, .sortDF h.1.1 h.1.2 (levelEquiv_sound h.2)⟩
             · cases h
 
 /-- What `infer` returns is a type of the term in Lean4Lean's judgement, whatever the fuel. -/

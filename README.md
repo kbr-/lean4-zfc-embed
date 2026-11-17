@@ -170,19 +170,19 @@ Lake does not track the example's data files: after changing one, change
   names repeat, or whose name the checker's environment also gives a different constant, and with
   it every later constant that mentions it; evaluating
   `(generated cenv).names` lists what it kept. It accepts an argument whose type and the function's
-  domain are equal, step one to the other, or are both `∀` with parts that are, and knows no η, no
-  proof irrelevance and no recursor rule. Run on the 580 export fixtures of Con-Leche's `tests/e2e/`
-  (`lake exe reach`; a file with no result after five seconds, four for the twelve known not to
-  finish, was abandoned), this repository's run of the checker accepted 338, did not accept 240 and
-  gave no answer on 2. On 328 of the accepted the generator finished, and of the 20764 constants of
-  those environments, each count including the prelude's, it kept 20454, keeping 229 environments
-  whole and storing 4824 equations; the totals are sums over the lines `reach` prints. On the other
-  ten, among them `tower_beqpair`, which Con-Leche's own binary accepts at once, the generator did
-  not finish within four seconds; how long it takes there was not measured. The generated
-  environment holds an equation only where a constant of the accepted environment has it as its
-  type, `@Eq T a b`, or where it unfolds a kept definition whose value `infer` types at the
-  definition's type: a recursor's computation rule is not added. Whether Con-Leche's checker and
-  Lean4Lean's theory accept the same environments is not addressed.
+  domain are equal, step one to the other, are both `∀` with parts that are, or are sorts at levels
+  of equal value under every assignment, and knows no η, no proof irrelevance and no recursor rule.
+  Run on the 580 export fixtures of Con-Leche's `tests/e2e/` (`lake exe reach --measure`, which
+  abandons a file with no result after five seconds), this repository's run of the checker accepted
+  338, did not accept 240 and gave no answer on 2. On 328 of the accepted the generator finished,
+  and of the 20764 constants of those environments, each count including the prelude's, it kept
+  20544, keeping 253 environments whole and storing 4870 equations; the totals are sums over the
+  lines `reach` prints. On the other ten, among them `tower_beqpair`, which Con-Leche's own binary
+  accepts at once, the generator did not finish within five seconds; how long it takes there was not
+  measured. The generated environment holds an equation only where a constant of the accepted
+  environment has it as its type, `@Eq T a b`, or where it unfolds a kept definition whose value
+  `infer` types at the definition's type: a recursor's computation rule is not added. Whether
+  Con-Leche's checker and Lean4Lean's theory accept the same environments is not addressed.
 - **The result is a Lean theorem with a hypothesis.** `OmegaInaccessibles` is assumed, over
   Mathlib's `ZFSet`. No theorem of first-order set theory about an encoding of the type theory is
   derived from it.
@@ -202,11 +202,13 @@ Lake does not track the example's data files: after changing one, change
 | `Lean4Zfc/Bridge.lean` | The translation into Con-Leche's terms, `CertOrdered`, `CertOrdered.consistent` |
 | `Lean4Zfc/Checked.lean` | `checked_consistent` |
 | `Lean4Zfc/Infer.lean` | Decidable equality of terms; a variable's type in a context |
+| `Lean4Zfc/Level.lean` | `leq`, `levelEquiv`, `levelEquiv_sound`: a sound check that two levels have equal values |
 | `Lean4Zfc/Convert.lean` | `infer`, `sortOf`, `infer_sound`: the inferencer that converts |
 | `Lean4Zfc/Generate.lean` | `generate`, `generate_certOrdered`, `generated_consistent` |
 | `Lean4Zfc/Example/` | The example, certified by hand and by the generator, and its data |
-| `Reach.lean` | `lake exe reach FILE...`: how many constants of each export the generator keeps |
-| `Lean4ZfcTest/` | The axioms of each theorem, pinned: a `sorry` reaching one fails the build; the rejected false export; `badEnv_wf` |
+| `Lean4Zfc/Tally.lean` | The totals of a saved measurement |
+| `Reach.lean` | `lake exe reach FILE...`: how many constants of each export the generator keeps, and where `infer` stops on the first constant left out; `--measure DIR SECONDS JOBS` runs it on a directory, `--summary FILE` totals a saved run |
+| `Lean4ZfcTest/` | The axioms of each theorem, pinned: a `sorry` reaching one fails the build; the rejected false export; `badEnv_wf`; the tally and the level check on worked examples |
 | `inaccessibles/` | A Lake package of its own, the only part that needs Mathlib: the theorems above |
 | `patches/` | The changes that build Lean4Lean's theory at Lean v4.35.0 |
 
