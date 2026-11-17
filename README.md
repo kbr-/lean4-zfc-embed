@@ -156,7 +156,8 @@ The checker's run and each comparison of stored constants is evaluated by compil
 (`native_decide`), so `env_consistent` depends on seven axioms of compiled evaluation beside the
 three standard ones. The general theorems do not, and the library's root module does not import the
 example. With `f_eq` changed to the false equation `f = PUnit.unit` (`data/f_eq_false.ndjson`), the
-checker rejects the export: `Lean4ZfcTest/Example.lean` proves it (`false_export_rejected`).
+run on the export ends in an error where the run on the true one ends in an environment:
+`Lean4ZfcTest/Example.lean` proves it (`false_export_rejected`).
 
 `Lean4Zfc/Example/PUnitGenerated.lean` runs the generator on the same result of the checker. It
 keeps every constant the checker's environment holds, the export's and the prelude's
@@ -184,17 +185,19 @@ Lake does not track the example's data files: after changing one, change
   of equal value under every assignment, and knows no η, no proof irrelevance and no recursor rule.
   Run on the 580 export fixtures of Con-Leche's `tests/e2e/` (`lake exe reach --measure`, here with
   a limit of thirty seconds a file), this repository's run of the checker accepted 338, did not
-  accept 240 and gave no answer on 2. On 328 of the accepted the generator finished, and of the
-  20764 constants of those environments, each count including the prelude's, it kept 20544, keeping
-  253 environments whole and storing 4870 equations; the totals are sums over the lines `reach`
-  prints. On the other ten, among them `tower_beqpair`, which Con-Leche's own binary accepts at
-  once, the generator did not finish within thirty seconds; how long it takes there was not
-  measured. The limit is far above the slowest file that finishes, about eleven seconds on a loaded
-  machine, so the totals do not depend on the machine's speed. The generated environment holds an
-  equation only where a constant of the accepted environment has it as its type, `@Eq T a b`, or
-  where it unfolds a kept definition whose value `infer` types at the definition's type: a
-  recursor's computation rule is not added. Whether Con-Leche's checker and Lean4Lean's theory
-  accept the same environments is not addressed.
+  accept 240 and gave no answer on 2. "Did not accept" is any error of the run, in parsing the
+  export, preparing the prelude or checking, which `reach` does not tell apart; the fixtures include
+  exports made to be rejected. On 328 of the accepted the generator finished, and of the 20764
+  constants of those environments, each count including the prelude's, it kept 20544, keeping 253
+  environments whole and storing 4870 equations; the totals are sums over the lines `reach` prints.
+  On the other ten, among them `tower_beqpair`, which Con-Leche's own binary accepts at once, the
+  generator did not finish within thirty seconds; how long it takes there was not measured. The
+  totals are those of this limit on the machine used, where the slowest file that finished took
+  about eleven seconds alone under load; a machine that finishes one of the ten within the limit
+  prints other totals. The generated environment holds an equation only where a constant of the
+  accepted environment has it as its type, `@Eq T a b`, or where it unfolds a kept definition whose
+  value `infer` types at the definition's type: a recursor's computation rule is not added. Whether
+  Con-Leche's checker and Lean4Lean's theory accept the same environments is not addressed.
 - **The result is a Lean theorem with a hypothesis.** `OmegaInaccessibles` is assumed, over
   Mathlib's `ZFSet`. No theorem of first-order set theory about an encoding of the type theory is
   derived from it.
@@ -219,7 +222,7 @@ Lake does not track the example's data files: after changing one, change
 | `Lean4Zfc/Convert.lean` | `infer`, `sortOf`, `infer_sound`: the inferencer that converts |
 | `Lean4Zfc/Generate.lean` | `generate`, `generate_certOrdered`, `generated_consistent` |
 | `Lean4Zfc/Example/` | The example, certified by hand and by the generator, and its data |
-| `Lean4Zfc/Tally.lean` | The totals of a saved measurement |
+| `Lean4Zfc/Tally.lean` | The totals of a saved measurement; `tally_partition`: its kinds of line add up to the lines that are not blank |
 | `Reach.lean` | `lake exe reach FILE...`: how many constants of each export the generator keeps, and where `infer` stops on the first constant left out; `--measure DIR SECONDS JOBS` runs it on a directory, `--summary FILE` totals a saved run |
 | `Lean4ZfcTest/` | The axioms of each theorem, pinned: a `sorry` reaching one fails the build; the rejected false export; `badEnv_wf`; the tally and the level check on worked examples |
 | `inaccessibles/` | A Lake package of its own, the only part that needs Mathlib: the theorems above |
@@ -260,6 +263,8 @@ its package directory before building.
 
 ## Sources and licence
 
-This repository is under the Apache License 2.0, as are Lean4Lean and Con-Leche. It contains no code
-of either; `Lean4Zfc/Example/data/corner_punit_own.ndjson` is Con-Leche's test fixture, unchanged,
-and `patches/lean4lean-v4.35.0.patch` is a change to Lean4Lean's files.
+This repository is under the Apache License 2.0, as are Lean4Lean and Con-Leche. Two of its files
+come from them and keep their authors' copyright under that licence:
+`Lean4Zfc/Example/data/corner_punit_own.ndjson` is Con-Leche's test fixture, unchanged, and
+`patches/lean4lean-v4.35.0.patch` is a change to four of Lean4Lean's files, which quotes their
+lines. The Lean modules here are this repository's own.
