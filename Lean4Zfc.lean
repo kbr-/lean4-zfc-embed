@@ -5,6 +5,8 @@ import Lean4Zfc.Definition
 import Lean4Zfc.Built
 import Lean4Zfc.Bridge
 import Lean4Zfc.Checked
+import Lean4Zfc.Infer
+import Lean4Zfc.Generate
 
 /-!
 Lean 4's type theory interpreted in set theory.
