@@ -125,13 +125,18 @@ def generatedReport (cenv : ConLeche.Env) : String :=
     s!"\tfirst left out {(dropped.take 5).map (fun ci => untrName ci.name)}" ++ why
 
 /-- One file's line of a measurement: this program run on `path` as a child under `timeout`, its
-output kept whole, and the marker `Lean4Zfc/Tally.lean` reads when the limit stopped it. -/
+output kept whole, with the marker `Lean4Zfc/Tally.lean` reads when the limit stopped it, and
+another when the child ended in any other failure, which the tally counts as a line of no known
+form. The line starts with the file's name even when the child printed nothing, so every file has
+its line. -/
 def measureFile (self : System.FilePath) (secs : Nat) (path : System.FilePath) : IO String := do
+  let name := path.fileName.getD ""
   let out ← IO.Process.output
-    { cmd := "timeout", args := #[toString secs, self.toString, path.fileName.getD ""],
-      cwd := path.parent }
-  let line := "\n".intercalate ((out.stdout.splitOn "\n").filter (· ≠ ""))
+    { cmd := "timeout", args := #[toString secs, self.toString, name], cwd := path.parent }
+  let printed := "\n".intercalate ((out.stdout.splitOn "\n").filter (· ≠ ""))
+  let line := if printed.isEmpty then name else printed
   if out.exitCode == 124 then return s!"{line}\t[stopped at the {secs}-second limit]"
+  else if out.exitCode != 0 then return s!"{line}\t[failed with exit code {out.exitCode}]"
   else return line
 
 /-- Every `.ndjson` file of `dir`, in name order, measured `jobs` at a time, each line printed in
@@ -160,8 +165,9 @@ def main (args : List String) : IO Unit := do
     match rest with
     | [dir, secs, jobs] =>
       match secs.toNat?, jobs.toNat? with
-      | some s, some (j + 1) => measureDir dir s (j + 1)
-      | _, _ => throw <| IO.userError "usage: reach --measure DIR SECONDS JOBS, JOBS at least 1"
+      | some (s + 1), some (j + 1) => measureDir dir (s + 1) (j + 1)
+      | _, _ =>
+        throw <| IO.userError "usage: reach --measure DIR SECONDS JOBS, each a number at least 1"
     | _ => throw <| IO.userError "usage: reach --measure DIR SECONDS JOBS"
     return
   for path in args do
