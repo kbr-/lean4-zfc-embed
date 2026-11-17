@@ -31,7 +31,9 @@ theorem isZeroLevel_sound : ∀ {l : VLevel}, isZeroLevel l = true → ∀ ls, l
   | .succ _, h, _ => by simp [isZeroLevel] at h
   | .param _, h, _ => by simp [isZeroLevel] at h
 
-/-- `a` is at most `b` under every assignment, by rules on the levels' syntax. -/
+/-- `a` is at most `b` under every assignment, by rules on the levels' syntax. It tries the rules
+for `a`'s form and then those for `b`'s, each recursing into both parts of a `max` or an `imax`, so
+its cost can grow exponentially with the size of the two levels. -/
 def leq (a b : VLevel) : Bool :=
   if a = b then true
   else
