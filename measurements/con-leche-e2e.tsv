@@ -1,0 +1,580 @@
+acc_major_reduce.ndjson	accepted	constants 37	kept 37	equations 5	first left out []
+acc_rec_opaque.ndjson	not accepted
+and_rec_def.ndjson	accepted	constants 36	kept 36	equations 4	first left out []
+and_rec_opaque.ndjson	accepted	constants 30	kept 30	equations 1	first left out []
+and_rec_opaque_noand.ndjson	accepted	constants 30	kept 30	equations 1	first left out []
+basis_binderinfo.ndjson	accepted	constants 26	kept 26	equations 0	first left out []
+basis_binderinfo_rec.ndjson	accepted	constants 26	kept 26	equations 0	first left out []
+basis_eq_mixed_block.ndjson	not accepted
+basis_eq_other_names.ndjson	accepted	constants 26	kept 26	equations 0	first left out []
+basis_eq_rec_motive_name.ndjson	accepted	constants 26	kept 26	equations 0	first left out []
+basis_eq_rec_swapped_names_bad.ndjson	not accepted
+basis_eq_refl_other_name_bad.ndjson	not accepted
+basis_nat_rule_bad.ndjson	not accepted
+basis_nat_rule_used_bad.ndjson	not accepted
+basis_quot_all_other_names.ndjson	accepted	constants 26	kept 26	equations 1	first left out []
+basis_quot_lift_type_bad.ndjson	not accepted
+basis_quot_other_names.ndjson	accepted	constants 29	kept 29	equations 0	first left out []
+binder_name_proj.ndjson	accepted	constants 35	kept 34	equations 2	first left out [w2]	the first because its type has a projection
+binder_pw_field.ndjson	not accepted
+binder_shared_local.ndjson	accepted	constants 140	kept 138	equations 15	first left out [_private.Init.Prelude.0.Nat.succ_le_succ.match_1_4, _private.Init.Prelude.0.Nat.ble_eq_true_of_le.match_1_4]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a ∀ against a ∀
+blank_line_final.ndjson	not accepted
+blank_line_mid.ndjson	not accepted
+block_ctor_levels.ndjson	not accepted
+block_ctor_params.ndjson	not accepted
+block_no_rec.ndjson	not accepted
+block_no_type.ndjson	not accepted
+block_params_exceed.ndjson	not accepted
+bool_ctor_name_former.ndjson	not accepted
+budget_block.ndjson	accepted	constants 26	kept 26	equations 0	first left out []
+complete_c02_self_delta_sort.ndjson	accepted	constants 33	kept 33	equations 1	first left out []
+complete_c10_idx_delta_recfield.ndjson	accepted	constants 33	kept 27	equations 0	first left out [C.base, C.step, C.rec, T.mk, T.rec_1]	the first because the inferencer does not type its type at a sort; it stops at a head whose type is no function: Idx
+complete_m3_proj_param.ndjson	accepted	constants 34	kept 31	equations 0	first left out [T.mk, T.rec_1, T.rec]	the first because its type has a projection
+complete_m3_proj_phantom.ndjson	not accepted
+complete_m3_proj_unapplied.ndjson	not accepted
+corner_andpin_def_bad.ndjson	not accepted
+corner_andpin_std.ndjson	accepted	constants 26	kept 26	equations 0	first left out []
+corner_andpin_swapped_bad.ndjson	not accepted
+corner_andpin_type_bad.ndjson	not accepted
+corner_checkdel_d_anc.ndjson	accepted	constants 42	kept 39	equations 2	first left out [R.rec, R.rec_1, R.rec_2]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: F against R
+corner_checkdel_d_anc_bad.ndjson	accepted	constants 42	kept 38	equations 2	first left out [R.mk, R.rec, R.rec_1, R.rec_2]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a ∀ against a ∀
+corner_checkdel_d_anc_nocall.ndjson	accepted	constants 42	kept 42	equations 2	first left out []
+corner_checkdel_d_anc_nocall_bad.ndjson	accepted	constants 42	kept 38	equations 2	first left out [R.mk, R.rec, R.rec_1, R.rec_2]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a ∀ against a ∀
+corner_fuseloop_order_base.ndjson	accepted	constants 26	kept 26	equations 0	first left out []
+corner_genrec_nest_missing_class.ndjson	not accepted
+corner_idx_container.ndjson	accepted	constants 59	kept 59	equations 5	first left out []
+corner_keynamed_d3_level.ndjson	accepted	constants 44	kept 40	equations 1	first left out [R.rec, R.rec_1, R.rec_2, R.rec_3]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: F against R
+corner_keynamed_d3_level_split.ndjson	accepted	constants 44	kept 38	equations 1	first left out [D.mk, D.rec, R.rec, R.rec_1, R.rec_2]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a ∀ against a ∀
+corner_keynamed_level_inst.ndjson	accepted	constants 40	kept 36	equations 0	first left out [R.rec, R.rec_1, R.rec_2, R.rec_3]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: List against List
+corner_mutual_prop_large_bad.ndjson	not accepted
+corner_mutual_redex_other.ndjson	accepted	constants 60	kept 60	equations 6	first left out []
+corner_mutual_redex_other_neg_bad.ndjson	not accepted
+corner_mutual_redex_other_refl.ndjson	accepted	constants 62	kept 60	equations 6	first left out [SA.rec, SB.rec]	the first because the inferencer does not type its type at a sort; it stops at a head whose type is no function: Fn
+corner_mutual_redex_other_vanish.ndjson	accepted	constants 61	kept 61	equations 7	first left out []
+corner_nest_and_prop_large_bad.ndjson	not accepted
+corner_nest_or_prop.ndjson	accepted	constants 34	kept 34	equations 0	first left out []
+corner_nest_or_prop_large_bad.ndjson	not accepted
+corner_nestind_d_dep.ndjson	accepted	constants 31	kept 31	equations 0	first left out []
+corner_nestind_d_free.ndjson	accepted	constants 31	kept 31	equations 0	first left out []
+corner_nestind_d_idxred.ndjson	accepted	constants 39	kept 39	equations 2	first left out []
+corner_nestind_d_indexed.ndjson	accepted	constants 59	kept 59	equations 5	first left out []
+corner_nestind_d_levels.ndjson	accepted	constants 39	kept 39	equations 0	first left out []
+corner_nestind_d_mutual.ndjson	accepted	constants 35	kept 35	equations 0	first left out []
+corner_nestind_d_prop.ndjson	accepted	constants 31	kept 31	equations 0	first left out []
+corner_nestind_d_redex_bad.ndjson	not accepted
+corner_nestind_d_reduce.ndjson	accepted	constants 36	kept 32	equations 1	first left out [CC.mk, CC.rec, TC.rec_1, TC.rec]	the first because its type has a let
+corner_nestind_d_tele.ndjson	accepted	constants 35	kept 33	equations 0	first left out [TF.rec_1, TF.rec]	the first because the inferencer does not type its type at a sort; it stops at a head whose type is no function: Fn
+corner_nestind_f13_listrose.ndjson	accepted	constants 36	kept 36	equations 0	first left out []
+corner_nestind_f13_listrose_prop.ndjson	accepted	constants 36	kept 36	equations 0	first left out []
+corner_nestind_f18_bare_bad.ndjson	not accepted
+corner_nestind_f18_bare_free.ndjson	not accepted
+corner_nestind_k53_callee_bad.ndjson	accepted	constants 38	kept 34	equations 0	first left out [WT.rec_2, WT.rec, WT.rec_3, WT.rec_1]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: List against List
+corner_nestind_k53_callee_free.ndjson	accepted	constants 38	kept 38	equations 0	first left out []
+corner_nestind_unreached_f13.ndjson	accepted	constants 47	kept 47	equations 0	first left out []
+corner_nestind_unreached_mates.ndjson	accepted	constants 40	kept 40	equations 0	first left out []
+corner_nestind_unreached_nested.ndjson	accepted	constants 41	kept 41	equations 0	first left out []
+corner_nestkern_f4_prop_aux_bad.ndjson	not accepted
+corner_nestpos_eqidx_bad.ndjson	not accepted
+corner_nestpos_eqidx_free.ndjson	accepted	constants 30	kept 30	equations 0	first left out []
+corner_nestpos_eqlocal_bad.ndjson	not accepted
+corner_nestpos_eqlocal_free.ndjson	accepted	constants 30	kept 30	equations 0	first left out []
+corner_nestpos_eqret_bad.ndjson	not accepted
+corner_nestpos_eqret_free.ndjson	accepted	constants 33	kept 33	equations 0	first left out []
+corner_nestpos_group_bad.ndjson	not accepted
+corner_nestpos_group_free.ndjson	accepted	constants 36	kept 36	equations 0	first left out []
+corner_nestpos_idxty_bad.ndjson	not accepted
+corner_nestpos_idxty_free.ndjson	accepted	constants 39	kept 39	equations 2	first left out []
+corner_nestpos_idxval_bad.ndjson	not accepted
+corner_nestpos_idxval_free.ndjson	accepted	constants 74	kept 74	equations 7	first left out []
+corner_nestpos_levelcount_bad.ndjson	not accepted
+corner_nestpos_local_bad.ndjson	not accepted
+corner_nestpos_local_free.ndjson	accepted	constants 46	kept 46	equations 2	first left out []
+corner_nestpos_neg_bad.ndjson	not accepted
+corner_nestpos_neg_free.ndjson	accepted	constants 33	kept 33	equations 0	first left out []
+corner_nestpos_negdeep_bad.ndjson	not accepted
+corner_nestpos_negdeep_free.ndjson	accepted	constants 37	kept 37	equations 0	first left out []
+corner_nestpos_redex_bad.ndjson	not accepted
+corner_nestpos_redex_free.ndjson	accepted	constants 35	kept 35	equations 1	first left out []
+corner_nestpos_sort_bad.ndjson	not accepted
+corner_nestpos_sort_free.ndjson	accepted	constants 33	kept 33	equations 0	first left out []
+corner_nestpos_sortprop_bad.ndjson	not accepted
+corner_nestpos_sortprop_free.ndjson	accepted	constants 33	kept 33	equations 0	first left out []
+corner_nestw_u4_bad.ndjson	not accepted
+corner_nestw_u4_beta.ndjson	accepted	constants 31	kept 31	equations 0	first left out []
+corner_nestw_u4_free.ndjson	accepted	constants 46	kept 46	equations 2	first left out []
+corner_nestw_u4frame_bad.ndjson	not accepted
+corner_nestw_u4frame_beta.ndjson	accepted	constants 35	kept 35	equations 0	first left out []
+corner_nestw_u4frame_def.ndjson	accepted	constants 34	kept 34	equations 1	first left out []
+corner_nestw_u4frame_free.ndjson	accepted	constants 49	kept 49	equations 2	first left out []
+corner_pin_eq_bad.ndjson	not accepted
+corner_pin_eq_free.ndjson	accepted	constants 26	kept 26	equations 0	first left out []
+corner_pin_quot_bad.ndjson	not accepted
+corner_pin_quot_free.ndjson	accepted	constants 29	kept 29	equations 0	first left out []
+corner_posderiv_major_delta.ndjson	accepted	constants 33	kept 33	equations 1	first left out []
+corner_posderiv_major_group.ndjson	accepted	constants 35	kept 35	equations 0	first left out []
+corner_posderiv_mention_beta.ndjson	accepted	constants 36	kept 36	equations 0	first left out []
+corner_posderiv_mention_binder.ndjson	accepted	constants 31	kept 31	equations 0	first left out []
+corner_posderiv_mention_delta.ndjson	accepted	constants 33	kept 33	equations 1	first left out []
+corner_posderiv_mention_mutual.ndjson	accepted	constants 35	kept 35	equations 0	first left out []
+corner_prop_mutual_small.ndjson	accepted	constants 32	kept 32	equations 0	first left out []
+corner_prop_refl_large.ndjson	accepted	constants 27	kept 27	equations 0	first left out []
+corner_punit_own.ndjson	accepted	constants 28	kept 28	equations 1	first left out []
+corner_punit_unit_eta.ndjson	accepted	constants 31	kept 31	equations 1	first left out []
+corner_rec_alien_rule.ndjson	not accepted
+corner_rec_body_redex.ndjson	accepted	constants 48	kept 48	equations 2	first left out []
+corner_rec_call_const_bad.ndjson	not accepted
+corner_rec_call_redex.ndjson	accepted	constants 41	kept 41	equations 1	first left out []
+corner_rec_closed_major.ndjson	not accepted
+corner_rec_dom_recursor.ndjson	accepted	constants 48	kept 48	equations 2	first left out []
+corner_rec_empty_prefix.ndjson	not accepted
+corner_rec_extra_binder.ndjson	not accepted
+corner_rec_hoolahoop.ndjson	not accepted
+corner_rec_k4_foreign_level_bad.ndjson	not accepted
+corner_rec_k6_param_dom_bad.ndjson	not accepted
+corner_rec_k7_let_major_bad.ndjson	not accepted
+corner_rec_major_params.ndjson	not accepted
+corner_rec_mono_large_bad.ndjson	not accepted
+corner_rec_no_ih.ndjson	not accepted
+corner_rec_redex_nonindex.ndjson	accepted	constants 41	kept 41	equations 1	first left out []
+corner_rec_reserved_name.ndjson	not accepted
+corner_rec_rule_missing.ndjson	not accepted
+corner_rec_rule_nfields.ndjson	not accepted
+corner_rec_rules_swapped.ndjson	not accepted
+corner_rec_two_callees.ndjson	not accepted
+corner_rec_two_recursors.ndjson	not accepted
+corner_rec_wtype_redex.ndjson	accepted	constants 45	kept 45	equations 1	first left out []
+corner_recpos_merge_defeq.ndjson	accepted	constants 37	kept 34	equations 0	first left out [WT.rec, WT.rec_2, WT.rec_1]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: List against List
+corner_recpos_missing_rec_1.ndjson	not accepted
+corner_recpos_missing_rec_2.ndjson	not accepted
+corner_recpos_missing_unreached.ndjson	accepted	constants 32	kept 32	equations 1	first left out []
+corner_recpos_mutual_delta.ndjson	accepted	constants 36	kept 36	equations 1	first left out []
+corner_recpos_mutual_missing_unreached.ndjson	accepted	constants 35	kept 35	equations 1	first left out []
+corner_recpos_perm_names.ndjson	accepted	constants 36	kept 36	equations 0	first left out []
+corner_recpos_split_copy.ndjson	accepted	constants 37	kept 37	equations 0	first left out []
+corner_rptie_order_base.ndjson	accepted	constants 35	kept 35	equations 1	first left out []
+corner_rpwhnf_erasedread_frame.ndjson	accepted	constants 32	kept 32	equations 1	first left out []
+corner_rpwhnf_erasedread_member.ndjson	accepted	constants 28	kept 28	equations 1	first left out []
+corner_rpwhnf_erasedread_nonrec.ndjson	accepted	constants 28	kept 28	equations 1	first left out []
+corner_simpd_order_decline.ndjson	not accepted
+corner_tshadow_aux_good.ndjson	accepted	constants 31	kept 31	equations 0	first left out []
+corner_tshadow_aux_nonfield_bad.ndjson	accepted	constants 31	kept 31	equations 0	first left out []
+corner_tshadow_aux_prop_bad.ndjson	not accepted
+corner_tshadow_aux_unreached.ndjson	not accepted
+corner_unitcaps_mutual_bad.ndjson	not accepted
+corner_unitcaps_mutual_free.ndjson	accepted	constants 46	kept 46	equations 3	first left out []
+corner_unitcaps_post_bad.ndjson	not accepted
+corner_unitcaps_post_free.ndjson	accepted	constants 38	kept 38	equations 1	first left out []
+ctor_sc_decide.ndjson	accepted	constants 80	kept 78	equations 12	first left out [t, t2]	the first because the inferencer does not type its type at a sort; it stops at a head whose type is no function: DecidableEq
+ctor_sc_decide_bad.ndjson	not accepted
+ctor_sc_diff_ctor_bad.ndjson	not accepted
+ctor_sc_eager.ndjson	accepted	constants 71	kept 71	equations 9	first left out []
+ctor_sc_nat.ndjson	accepted	constants 57	kept 55	equations 7	first left out [t2, t4]	the first because its type has a Nat literal above 256
+ctor_sc_partial_eta.ndjson	accepted	constants 34	kept 34	equations 1	first left out []
+ctor_sc_prop.ndjson	accepted	constants 33	kept 33	equations 2	first left out []
+ctor_sc_same_ctor.ndjson	accepted	constants 65	kept 65	equations 9	first left out []
+ctor_sc_same_ctor_bad.ndjson	not accepted
+ctor_sc_struct_eta.ndjson	accepted	constants 36	kept 36	equations 3	first left out []
+ctor_sc_unit_like.ndjson	accepted	constants 33	kept 33	equations 2	first left out []
+custom_axiom_declined.ndjson	not accepted
+cycle_forward.ndjson	not accepted
+cycle_mutual.ndjson	not accepted
+cycle_self_def.ndjson	not accepted
+decide_native_axiom.ndjson	not accepted
+defeq_binding_lam.ndjson	accepted	constants 55	kept 55	equations 8	first left out []
+defeq_binding_pi.ndjson	accepted	constants 55	kept 55	equations 8	first left out []
+defer_axiom_then_value_reject.ndjson	not accepted
+defer_value_reject_then_axiom.ndjson	not accepted
+delta_chain.ndjson	accepted	constants 633	kept 633	equations 605	first left out []
+direct_fix_acc.ndjson	accepted	constants 40	kept 40	equations 2	first left out []
+direct_fix_acc_large.ndjson	accepted	constants 29	kept 29	equations 1	first left out []
+direct_fix_le.ndjson	accepted	constants 39	kept 39	equations 1	first left out []
+direct_fix_nat.ndjson	accepted	constants 48	kept 48	equations 2	first left out []
+direct_fix_nat_ih_bad.ndjson	not accepted
+direct_fix_nat_neg_bad.ndjson	not accepted
+direct_fix_prop.ndjson	accepted	constants 37	kept 37	equations 1	first left out []
+direct_fix_prop_large.ndjson	accepted	constants 27	kept 27	equations 0	first left out []
+direct_fix_refl.ndjson	accepted	constants 41	kept 41	equations 1	first left out []
+direct_fix_refl_ih_bad.ndjson	not accepted
+direct_fix_refl_neg_bad.ndjson	not accepted
+direct_fix_struct_eta.ndjson	not accepted
+direct_fix_struct_proj.ndjson	accepted	constants 54	kept 53	equations 3	first left out [Dep.b_mk]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a bound variable against a bound variable
+direct_fix_struct_proj_idx_bad.ndjson	not accepted
+direct_fix_struct_proj_iota_bad.ndjson	not accepted
+direct_fix_term.ndjson	accepted	constants 121	kept 117	equations 11	first left out [Term'.size.match_1, _private.Init.Prelude.0.Nat.succ_le_succ.match_1_4, Term'.size_func, CofixA'.head.match_1]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a bound variable against a bound variable
+direct_fix_tree.ndjson	accepted	constants 42	kept 42	equations 1	first left out []
+direct_fix_vec.ndjson	accepted	constants 57	kept 57	equations 2	first left out []
+direct_fix_vec_idx_occ_bad.ndjson	not accepted
+direct_fix_vec_ih_idx_bad.ndjson	not accepted
+direct_fix_vec_res_occ_bad.ndjson	not accepted
+direct_fix_wtype.ndjson	accepted	constants 45	kept 45	equations 1	first left out []
+direct_fix_wtype_ih_bad.ndjson	not accepted
+direct_fix_wtype_neg_bad.ndjson	not accepted
+direct_idx_defhead.ndjson	accepted	constants 37	kept 33	equations 1	first left out [OfFn.mk, OfFn.rec, OfFn.inv, OfFn.of_eq]	the first because the inferencer does not type its type at a sort; it stops at a head whose type is no function: Pred
+direct_idx_eq.ndjson	accepted	constants 33	kept 33	equations 0	first left out []
+direct_idx_prop.ndjson	accepted	constants 46	kept 46	equations 1	first left out []
+direct_idx_prop_idx_bad.ndjson	not accepted
+direct_idx_prop_large_bad.ndjson	not accepted
+direct_idx_vec.ndjson	accepted	constants 47	kept 46	equations 2	first left out [Par.flip_even]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: Par against Par
+direct_nested_dep.ndjson	accepted	constants 41	kept 41	equations 3	first left out []
+direct_struct_raw.ndjson	accepted	constants 38	kept 37	equations 2	first left out [Wrap.snd_mk]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a bound variable against a bound variable
+direct_sum_enum.ndjson	accepted	constants 50	kept 50	equations 9	first left out []
+direct_sum_option.ndjson	accepted	constants 60	kept 60	equations 5	first left out []
+direct_sum_or.ndjson	accepted	constants 40	kept 40	equations 1	first left out []
+direct_sum_or_large_bad.ndjson	not accepted
+eager_memo_shared.ndjson	accepted	constants 83	kept 82	equations 12	first left out [t]	the first because its type has a Nat literal above 256
+eager_open_nat.ndjson	accepted	constants 83	kept 82	equations 12	first left out [t]	the first because its type has a Nat literal above 256
+eager_open_nat_control.ndjson	accepted	constants 82	kept 81	equations 11	first left out [t]	the first because its type has a Nat literal above 256
+empty_file.ndjson	accepted	constants 23	kept 23	equations 0	first left out []
+empty_redefined.ndjson	not accepted
+eta_partial_ctor.ndjson	accepted	constants 45	kept 45	equations 0	first left out []
+eta_partial_ctor_alias_bad.ndjson	not accepted
+eta_partial_ctor_bad.ndjson	not accepted
+eta_prop_struct.ndjson	accepted	constants 29	kept 29	equations 1	first left out []
+eta_struct_major_and_no_whnf.ndjson	accepted	constants 44	kept 43	equations 3	first left out [andMajorNoWhnf]	the first because the inferencer does not type its type at a sort; it stops at a head whose type is no function: True'
+eta_struct_major_no_whnf.ndjson	accepted	constants 50	kept 50	equations 4	first left out []
+false_rec_bad.ndjson	not accepted
+false_redefined.ndjson	not accepted
+final_line_no_newline.ndjson	accepted	constants 26	kept 26	equations 0	first left out []
+genrec_k2_caseson.ndjson	not accepted
+genrec_k3_caseson.ndjson	not accepted
+genrec_rules_garbage.ndjson	not accepted
+genrec_rules_garbage_nested.ndjson	not accepted
+grind_field_cancel_inv.ndjson	accepted	constants 279	kept 274	equations 39	first left out [_private.Init.Prelude.0.Nat.succ_le_succ.match_1_7, _private.Init.Prelude.0.Nat.ble_eq_true_of_le.match_1_7, _private.Init.Prelude.0.Nat.le_trans.match_1_10, _private.Init.Prelude.0.Nat.pred_le_pred.match_1_1, cancelInv0]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a ∀ against a ∀
+iff_rec_opaque.ndjson	not accepted
+ind_ctor_cidx_bad.ndjson	not accepted
+ind_ctor_induct_bad.ndjson	not accepted
+ind_ctor_levels_use.ndjson	not accepted
+ind_ctor_numfields_bad.ndjson	not accepted
+ind_ctor_order.ndjson	accepted	constants 27	kept 27	equations 0	first left out []
+ind_ctors_dup_bad.ndjson	not accepted
+ind_ctors_missing_bad.ndjson	not accepted
+ind_defhead_chain.ndjson	accepted	constants 36	kept 36	equations 5	first left out []
+ind_defhead_fix.ndjson	accepted	constants 59	kept 59	equations 8	first left out []
+ind_defhead_k.ndjson	accepted	constants 35	kept 34	equations 3	first left out [U.k]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: OfNat against OfNat
+ind_defhead_lit_char.ndjson	not accepted
+ind_defhead_lit_family.ndjson	not accepted
+ind_defhead_mutual.ndjson	accepted	constants 33	kept 33	equations 2	first left out []
+ind_defhead_nested.ndjson	accepted	constants 150	kept 141	equations 14	first left out [Vec'.nil, Vec'.cons, Vec'.rec, Rose.node, Rose.rec]	the first because the inferencer does not type its type at a sort; it stops at a head whose type is no function: Fam
+ind_defhead_opaque_bad.ndjson	not accepted
+ind_defhead_param_bad.ndjson	accepted	constants 69	kept 67	equations 8	first left out [K.mk, K.rec]	the first because the inferencer does not type its type at a sort; it stops at a head whose type is no function: Two
+ind_defhead_param_base.ndjson	accepted	constants 69	kept 69	equations 8	first left out []
+ind_defhead_prop_field.ndjson	accepted	constants 33	kept 33	equations 2	first left out []
+ind_defhead_prop_field_proj_bad.ndjson	not accepted
+ind_defhead_sort_u.ndjson	accepted	constants 32	kept 32	equations 1	first left out []
+ind_defhead_struct.ndjson	accepted	constants 31	kept 31	equations 2	first left out []
+ind_empty_idx.ndjson	accepted	constants 29	kept 29	equations 0	first left out []
+ind_former_redex.ndjson	accepted	constants 27	kept 27	equations 0	first left out []
+ind_idx_defhead_sort.ndjson	accepted	constants 33	kept 33	equations 2	first left out []
+ind_lit_shape_char.ndjson	not accepted
+ind_mutual_idxsort.ndjson	accepted	constants 105	kept 82	equations 10	first left out [IdxSort.MB.step, IdxSort.MA.rec, IdxSort.MB.rec, IdxSort.ma_example, IdxSort.mb_example]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: IdxSort.IdxW against Nat
+ind_mutual_idxsort_bad.ndjson	not accepted
+ind_mutual_param_bad.ndjson	not accepted
+ind_mutual_param_defeq.ndjson	accepted	constants 36	kept 36	equations 2	first left out []
+ind_mutual_sort_bad.ndjson	not accepted
+ind_mutual_sort_defeq.ndjson	accepted	constants 30	kept 30	equations 0	first left out []
+ind_mutual_three.ndjson	accepted	constants 47	kept 47	equations 1	first left out []
+ind_mutual_wide_telescope.ndjson	accepted	constants 122	kept 122	equations 0	first left out []
+ind_mutual_zero_ctor.ndjson	accepted	constants 31	kept 31	equations 1	first left out []
+ind_nest_inf.ndjson	accepted	constants 34	kept 34	equations 1	first left out []
+ind_nest_key_own_ctor.ndjson	not accepted
+ind_nest_prop.ndjson	accepted	constants 40	kept 40	equations 1	first left out []
+ind_nest_two_pins.ndjson	accepted	constants 42	kept 42	equations 1	first left out []
+ind_nest_via_refl.ndjson	accepted	constants 33	kept 33	equations 1	first left out []
+ind_numparams_bad.ndjson	not accepted
+ind_numparams_indices.ndjson	accepted	constants 48	kept 48	equations 2	first left out []
+ind_pos_whnf_fn.ndjson	accepted	constants 59	kept 57	equations 6	first left out [R.rec, R.size_node]	the first because the inferencer does not type its type at a sort; it stops at a head whose type is no function: Fn
+ind_pos_whnf_id.ndjson	accepted	constants 59	kept 59	equations 8	first left out []
+ind_proj_mutual_nested.ndjson	accepted	constants 49	kept 47	equations 3	first left out [MA.n_proj, NT.lbl_proj]	the first because its type has a projection
+ind_rec_k_bad.ndjson	not accepted
+ind_rec_struct_proj.ndjson	accepted	constants 34	kept 34	equations 2	first left out []
+ind_rec_struct_proj_raw.ndjson	accepted	constants 46	kept 43	equations 0	first left out [Chain.h_proj, MA.n_proj, NT.lbl_proj]	the first because its type has a projection
+ind_redundant_fields.ndjson	accepted	constants 27	kept 27	equations 1	first left out []
+ind_reflexive_tool.ndjson	accepted	constants 61	kept 61	equations 6	first left out []
+ind_rule_binder_bad.ndjson	not accepted
+ind_sort_u.ndjson	accepted	constants 36	kept 36	equations 0	first left out []
+ind_stub_pos.ndjson	not accepted
+ind_stub_rec.ndjson	not accepted
+ind_stub_reclps.ndjson	not accepted
+ind_stub_recname.ndjson	not accepted
+ind_stub_resid.ndjson	not accepted
+ind_stub_univ.ndjson	not accepted
+ind_unsafe.ndjson	not accepted
+indexed_one_ctor.ndjson	accepted	constants 32	kept 32	equations 2	first left out []
+indexed_one_ctor_proj.ndjson	not accepted
+indexed_one_ctor_proj_oob.ndjson	not accepted
+indexed_vec.ndjson	accepted	constants 35	kept 35	equations 2	first left out []
+inmodel_groups.ndjson	accepted	constants 100	kept 100	equations 10	first left out []
+inmodel_mutual.ndjson	accepted	constants 98	kept 98	equations 15	first left out []
+inmodel_mutual_idx.ndjson	accepted	constants 133	kept 131	equations 11	first left out [_private.Init.Prelude.0.Nat.succ_le_succ.match_1_4, InModelMutualIdx.size_example]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a ∀ against a ∀
+inmodel_mutual_refl.ndjson	accepted	constants 147	kept 144	equations 18	first left out [_private.Init.Prelude.0.Nat.le_trans.match_1_6, _private.Init.Prelude.0.Nat.succ_le_succ.match_1_4, InModelMutualRefl.count_example]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a ∀ against a ∀
+inmodel_nested.ndjson	accepted	constants 209	kept 207	equations 23	first left out [_private.Init.Prelude.0.Nat.succ_le_succ.match_1_4, _private.Init.Prelude.0.Nat.ble_eq_true_of_le.match_1_4]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a ∀ against a ∀
+irrel_commit.ndjson	accepted	constants 27	kept 27	equations 0	first left out []
+k_major_raw.ndjson	accepted	constants 62	kept 60	equations 8	first left out [k_major_raw_val._proof_1, k_major_raw_val._proof_2]	the first because its type has a Nat literal above 256
+k_rescue_stuck.ndjson	not accepted
+k_skip_closed_eta.ndjson	accepted	constants 80	kept 79	equations 11	first left out [k_skip_closed_eta]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: Prod against a λ
+k_skip_funext_rfl.ndjson	not accepted
+k_skip_omega_closed.ndjson	not accepted
+k_skip_omega_open.ndjson	not accepted
+k_skip_open_cast_lit.ndjson	not accepted
+k_skip_open_contra.ndjson	not accepted
+k_skip_open_eta.ndjson	accepted	constants 43	kept 43	equations 3	first left out []
+let_bad_thm.ndjson	not accepted
+let_bad_type.ndjson	not accepted
+let_bad_value.ndjson	not accepted
+let_bad_value_used.ndjson	not accepted
+let_ctor_spine_bad.ndjson	not accepted
+let_former_spine.ndjson	accepted	constants 26	kept 23	equations 0	first left out [T, T.mk, T.rec]	the first because its type has a let
+letfold_inline.ndjson	accepted	constants 202	kept 198	equations 26	first left out [_private.Init.Prelude.0.Nat.succ_le_succ.match_1_4, _private.Init.Prelude.0.Nat.ble_eq_true_of_le.match_1_4, _private.Init.Prelude.0.Nat.le_trans.match_1_6, _private.Init.Prelude.0.Nat.pred_le_pred.match_1_1]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a ∀ against a ∀
+letfold_let.ndjson	accepted	constants 202	kept 198	equations 26	first left out [_private.Init.Prelude.0.Nat.succ_le_succ.match_1_4, _private.Init.Prelude.0.Nat.ble_eq_true_of_le.match_1_4, _private.Init.Prelude.0.Nat.le_trans.match_1_6, _private.Init.Prelude.0.Nat.pred_le_pred.match_1_1]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a ∀ against a ∀
+letfold_pair_let.ndjson	accepted	constants 206	kept 202	equations 26	first left out [_private.Init.Prelude.0.Nat.succ_le_succ.match_1_4, _private.Init.Prelude.0.Nat.ble_eq_true_of_le.match_1_4, _private.Init.Prelude.0.Nat.le_trans.match_1_6, _private.Init.Prelude.0.Nat.pred_le_pred.match_1_1]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a ∀ against a ∀
+lit_hash_low_bits.ndjson	accepted	constants 78	kept 77	equations 10	first left out [t]	the first because its type has a Nat literal above 256
+malformed_midstream.ndjson	not accepted
+meta_line_absent.ndjson	not accepted
+meta_line_free.ndjson	accepted	constants 30	kept 30	equations 0	first left out []
+meta_line_late.ndjson	not accepted
+meta_line_second.ndjson	not accepted
+model_name_plain.ndjson	accepted	constants 27	kept 27	equations 4	first left out []
+mutual_rec_body_redex.ndjson	accepted	constants 98	kept 98	equations 15	first left out []
+mutual_rec_elim_levels.ndjson	not accepted
+mutual_rec_missing_rule.ndjson	not accepted
+mutual_rec_nonfield.ndjson	not accepted
+mutual_rec_prefix_mismatch.ndjson	not accepted
+mutual_rec_prop_concl.ndjson	not accepted
+mutual_rec_rules_swapped.ndjson	not accepted
+mutual_rec_unguarded.ndjson	not accepted
+mutual_rec_wrong_member.ndjson	not accepted
+mutual_struct_proj.ndjson	accepted	constants 170	kept 168	equations 26	first left out [_private.Init.Prelude.0.Nat.succ_le_succ.match_1_4, _private.Init.Prelude.0.Nat.ble_eq_true_of_le.match_1_4]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a ∀ against a ∀
+nat_add_levelpoly.ndjson	not accepted
+nat_add_wrong.ndjson	not accepted
+nat_beq_bad_base.ndjson	accepted	constants 43	kept 43	equations 4	first left out []
+nat_beq_wrong.ndjson	not accepted
+nat_ble_bad_base.ndjson	accepted	constants 41	kept 41	equations 3	first left out []
+nat_ble_wrong.ndjson	not accepted
+nat_div_declined.ndjson	accepted	constants 174	kept 169	equations 19	first left out [_private.Init.Prelude.0.Nat.succ_le_succ.match_1_4, _private.Init.Prelude.0.Nat.ble_eq_true_of_le.match_1_4, _private.Init.Prelude.0.Nat.le_trans.match_1_6, _private.Init.Prelude.0.Nat.pred_le_pred.match_1_1, t]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a ∀ against a ∀
+nat_divmod_ok.ndjson	accepted	constants 365	kept 361	equations 62	first left out [_private.Init.Prelude.0.Nat.succ_le_succ.match_1_4, _private.Init.Prelude.0.Nat.ble_eq_true_of_le.match_1_4, _private.Init.Prelude.0.Nat.le_trans.match_1_6, _private.Init.Prelude.0.Nat.pred_le_pred.match_1_1]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a ∀ against a ∀
+nat_mod_perturbed.ndjson	not accepted
+nat_mul_wrong.ndjson	not accepted
+nat_ops.ndjson	accepted	constants 59	kept 52	equations 3	first left out [addBig, subBig, mulBig, powBig, beqBig]	the first because its type has a Nat literal above 256
+nat_ops_bad_base.ndjson	accepted	constants 53	kept 53	equations 8	first left out []
+nat_ops_edge.ndjson	accepted	constants 65	kept 65	equations 16	first left out []
+nat_ops_nonstandard.ndjson	not accepted
+nat_pow_exp_32bit.ndjson	not accepted
+nat_pow_over_max_size.ndjson	not accepted
+nat_pow_wrong.ndjson	not accepted
+nat_pred_wrong.ndjson	not accepted
+nat_shift_exp_32bit.ndjson	not accepted
+nat_shift_over_max_size.ndjson	not accepted
+nat_size.ndjson	accepted	constants 69	kept 69	equations 12	first left out []
+nat_size_limit_big_lit.ndjson	accepted	constants 41	kept 40	equations 2	first left out [bigLit]	the first because its type has a Nat literal above 256
+nat_size_limit_mul_big.ndjson	accepted	constants 45	kept 44	equations 2	first left out [mulBig]	the first because its type has a Nat literal above 256
+nat_size_limit_mul_ok.ndjson	accepted	constants 45	kept 44	equations 2	first left out [mulOk]	the first because its type has a Nat literal above 256
+nat_size_limit_pow_32bit.ndjson	not accepted
+nat_size_limit_pow_big.ndjson	accepted	constants 49	kept 49	equations 4	first left out []
+nat_size_limit_pow_huge_exp.ndjson	accepted	constants 49	kept 49	equations 4	first left out []
+nat_size_limit_shift_big.ndjson	accepted	constants 64	kept 64	equations 8	first left out []
+nat_size_ok.ndjson	accepted	constants 69	kept 64	equations 7	first left out [onePow, zeroPow, onePowMax, powEdge, shiftOk]	the first because its type has a Nat literal above 256
+nat_sub_wrong.ndjson	not accepted
+native_decide_axiom.ndjson	not accepted
+natmul_deep_major.ndjson	accepted	constants 290	kept 283	equations 40	first left out [_private.Init.Prelude.0.Nat.succ_le_succ.match_1_4, _private.Init.Prelude.0.Nat.ble_eq_true_of_le.match_1_4, _private.Init.Prelude.0.Nat.le_trans.match_1_6, _private.Init.Prelude.0.Nat.pred_le_pred.match_1_1, _private.Init.Prelude.0.Fin.eq_of_val_eq.match_1_1]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a ∀ against a ∀
+natop_arg_order.ndjson	accepted	constants 63	kept 62	equations 9	first left out [w1]	the first because its type has a Nat literal above 256
+natop_before_ble.ndjson	accepted	constants 65	kept 65	equations 9	first left out []
+natop_before_eq.ndjson	accepted	constants 65	kept 65	equations 9	first left out []
+natop_booltrue_alias.ndjson	not accepted
+natop_foreign_former.ndjson	not accepted
+natop_foreign_thm.ndjson	not accepted
+natop_order.ndjson	accepted	constants 65	kept 65	equations 9	first left out []
+natop_perturbed_later_reject.ndjson	not accepted
+natop_perturbed_used_later.ndjson	not accepted
+natop_typepin_foreign.ndjson	not accepted
+nest_rose_prop.ndjson	accepted	constants 42	kept 41	equations 1	first left out [P.useMk]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a ∀ against a ∀
+nest_rose_tree.ndjson	accepted	constants 72	kept 72	equations 9	first left out []
+nested_aux_clash.ndjson	accepted	constants 37	kept 37	equations 1	first left out []
+nested_bvar_field.ndjson	accepted	constants 37	kept 37	equations 1	first left out []
+nested_comp_tower.ndjson	accepted	constants 37	kept 37	equations 1	first left out []
+nested_idx_closed.ndjson	accepted	constants 35	kept 35	equations 1	first left out []
+nested_idx_forall2.ndjson	accepted	constants 43	kept 43	equations 0	first left out []
+nested_idx_param.ndjson	accepted	constants 34	kept 34	equations 0	first left out []
+nested_idx_param_nat.ndjson	accepted	constants 70	kept 70	equations 7	first left out []
+nested_idx_param_type.ndjson	accepted	constants 35	kept 35	equations 0	first left out []
+nested_lam_pin_prop.ndjson	accepted	constants 34	kept 34	equations 0	first left out []
+nested_lam_pin_refl.ndjson	accepted	constants 36	kept 36	equations 3	first left out []
+nested_nonuniform_param.ndjson	not accepted
+nested_p01.ndjson	accepted	constants 31	kept 31	equations 0	first left out []
+nested_p02.ndjson	accepted	constants 31	kept 31	equations 0	first left out []
+nested_p03.ndjson	accepted	constants 36	kept 36	equations 0	first left out []
+nested_p04.ndjson	accepted	constants 42	kept 42	equations 0	first left out []
+nested_p05.ndjson	accepted	constants 35	kept 35	equations 0	first left out []
+nested_p06.ndjson	accepted	constants 28	kept 28	equations 0	first left out []
+nested_p07.ndjson	accepted	constants 31	kept 31	equations 0	first left out []
+nested_p10.ndjson	accepted	constants 30	kept 30	equations 0	first left out []
+nested_p13.ndjson	accepted	constants 27	kept 27	equations 0	first left out []
+nested_p20.ndjson	accepted	constants 38	kept 38	equations 0	first left out []
+nested_p22.ndjson	accepted	constants 35	kept 35	equations 0	first left out []
+nested_p24.ndjson	accepted	constants 67	kept 67	equations 5	first left out []
+nested_p25.ndjson	accepted	constants 59	kept 59	equations 5	first left out []
+nested_p26.ndjson	accepted	constants 64	kept 64	equations 5	first left out []
+nested_p30.ndjson	accepted	constants 31	kept 31	equations 0	first left out []
+nested_p31.ndjson	accepted	constants 35	kept 35	equations 0	first left out []
+nested_pi_field.ndjson	accepted	constants 37	kept 37	equations 1	first left out []
+nested_pin_collide.ndjson	accepted	constants 38	kept 38	equations 1	first left out []
+nested_pin_collide2.ndjson	accepted	constants 42	kept 42	equations 1	first left out []
+nested_pin_collide2_nomodel.ndjson	accepted	constants 80	kept 79	equations 2	first left out [J._model._impl.rec]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a ∀ against a λ
+nested_pin_collide_nomodel.ndjson	accepted	constants 76	kept 75	equations 2	first left out [J._model._impl.rec]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a ∀ against a λ
+nested_pin_nocollide.ndjson	accepted	constants 43	kept 43	equations 1	first left out []
+nested_pin_prop_cod.ndjson	accepted	constants 33	kept 33	equations 0	first left out []
+nested_prop_idx.ndjson	accepted	constants 38	kept 38	equations 1	first left out []
+nested_rec.ndjson	accepted	constants 72	kept 72	equations 10	first left out []
+nested_redex_owner.ndjson	accepted	constants 42	kept 42	equations 4	first left out []
+nested_redex_tower.ndjson	accepted	constants 42	kept 42	equations 4	first left out []
+nested_refl_pin.ndjson	accepted	constants 37	kept 37	equations 1	first left out []
+nested_struct_proj.ndjson	accepted	constants 90	kept 90	equations 16	first left out []
+nested_unused_param.ndjson	not accepted
+omega_demo2.ndjson	accepted	constants 29	kept 28	equations 0	first left out [demo2]	the first because the inferencer does not type its type at a sort; it stops at a head whose type is no function: P
+omega_kloop.ndjson	accepted	constants 32	kept 31	equations 0	first left out [demo]	the first because the inferencer does not type its type at a sort; it stops at a head whose type is no function: P
+opaque_decl.ndjson	accepted	constants 25	kept 25	equations 1	first left out []
+pre_decline_imax_field.ndjson	accepted	constants 42	kept 42	equations 1	first left out []
+prelude_bool_redefined.ndjson	not accepted
+proj_cheap_struct.ndjson	accepted	constants 94	kept 94	equations 16	first left out []
+proj_guard_data_bad.ndjson	not accepted
+proj_guard_past_used_data_bad.ndjson	not accepted
+proj_guard_prop_after_data.ndjson	accepted	constants 31	kept 31	equations 0	first left out []
+proj_guard_unfold.ndjson	accepted	constants 29	kept 29	equations 1	first left out []
+proj_guard_used_data_bad.ndjson	not accepted
+proj_lazy_struct.ndjson	accepted	constants 62	kept 61	equations 9	first left out [proj_lazy_struct]	the first because its type has a Nat literal above 256
+proj_name_free.ndjson	accepted	constants 31	kept 31	equations 1	first left out []
+proj_non_structure.ndjson	not accepted
+proj_of_subst_prop.ndjson	not accepted
+proj_pi_subject.ndjson	not accepted
+proj_share.ndjson	accepted		[stopped at the 30-second limit]
+proj_stuck_struct.ndjson	accepted	constants 63	kept 63	equations 8	first left out []
+proj_typename_bad.ndjson	not accepted
+proj_zero_field.ndjson	not accepted
+projtable_name_free.ndjson	accepted	constants 31	kept 31	equations 1	first left out []
+prop_proj.ndjson	accepted	constants 30	kept 30	equations 0	first left out []
+prop_proj_raw.ndjson	accepted	constants 30	kept 30	equations 0	first left out []
+prop_struct_proj_wide.ndjson	accepted	constants 204	kept 204	equations 5	first left out []
+psigma_rec_eta.ndjson	accepted	constants 27	kept 26	equations 0	first left out [psigmaRecStuckEta]	the first because its type has a projection
+quot_lift_iota.ndjson	accepted	constants 26	kept 26	equations 1	first left out []
+rec_nested_container_params.ndjson	accepted	constants 64	kept 64	equations 8	first left out []
+rec_record_ctor_numparams_bad.ndjson	not accepted
+rec_record_k_off_bad.ndjson	not accepted
+rec_record_k_on_nested_bad.ndjson	not accepted
+rec_record_nfields_bad.ndjson	not accepted
+reducenat_guard.ndjson	accepted	constants 53	kept 52	equations 6	first left out [reducenat_guard_open_fold]	the first because its type has a Nat literal above 256
+render_name_axiom.ndjson	not accepted
+render_name_progress.ndjson	accepted	constants 24	kept 24	equations 1	first left out []
+render_safety.ndjson	not accepted
+restrict_a01_ctorless_container.ndjson	accepted	constants 29	kept 29	equations 0	first left out []
+restrict_a01b_ctorless_indexed.ndjson	accepted	constants 34	kept 34	equations 1	first left out []
+restrict_a02_nest_sigma.ndjson	accepted	constants 63	kept 63	equations 5	first left out []
+restrict_a03_nest_idx_field.ndjson	accepted	constants 59	kept 59	equations 5	first left out []
+restrict_a04_nest_idx_param.ndjson	accepted	constants 59	kept 59	equations 5	first left out []
+restrict_a05_nest_idx_member.ndjson	accepted	constants 37	kept 37	equations 1	first left out []
+restrict_a06_nest_refl.ndjson	accepted	constants 31	kept 31	equations 0	first left out []
+restrict_a07_nest_mutual_cont.ndjson	accepted	constants 35	kept 35	equations 0	first left out []
+restrict_a08_nest_wcont.ndjson	accepted	constants 30	kept 30	equations 0	first left out []
+restrict_a09_nest_two_keys.ndjson	accepted	constants 32	kept 32	equations 0	first left out []
+restrict_a10_dep_indices.ndjson	accepted	constants 40	kept 40	equations 2	first left out []
+restrict_a11_let_field.ndjson	accepted	constants 45	kept 43	equations 3	first left out [T.mk, T.rec]	the first because its type has a let
+restrict_a12_mutual_indexed.ndjson	accepted	constants 35	kept 35	equations 1	first left out []
+restrict_a14_univ_nested.ndjson	accepted	constants 31	kept 31	equations 0	first left out []
+restrict_a15_nest_option_list.ndjson	accepted	constants 36	kept 36	equations 0	first left out []
+restrict_a16_prop_large_struct.ndjson	accepted	constants 29	kept 29	equations 0	first left out []
+restrict_a25_nest_let_param.ndjson	accepted	constants 31	kept 28	equations 0	first left out [T.mk, T.rec_1, T.rec]	the first because its type has a let
+restrict_a26_u4_attempt.ndjson	accepted	constants 27	kept 27	equations 0	first left out []
+restrict_a27_m2prime_redex.ndjson	not accepted
+restrict_a28_m2prime_phantom.ndjson	not accepted
+restrict_a29_m3_phantom_unapplied.ndjson	not accepted
+restrict_a32_nest_partial_param.ndjson	accepted	constants 63	kept 63	equations 5	first left out []
+restrict_a33c_nest_proj_param_kernel.ndjson	accepted	constants 34	kept 32	equations 0	first left out [T.rec_1, T.rec]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: Prod.snd against T
+restrict_a34b_sort_u_kernel.ndjson	accepted	constants 26	kept 26	equations 0	first left out []
+restrict_a37_myeq_k.ndjson	accepted	constants 26	kept 26	equations 0	first left out []
+restrict_a43_nest_prod_list.ndjson	accepted	constants 35	kept 35	equations 0	first left out []
+restrict_a44_structure_nested.ndjson	accepted	constants 33	kept 33	equations 0	first left out []
+restrict_a45_mutual_nested.ndjson	accepted	constants 36	kept 36	equations 0	first left out []
+restrict_a46_univ_max.ndjson	accepted	constants 31	kept 31	equations 0	first left out []
+restrict_a47_empty_prop_idx.ndjson	accepted	constants 25	kept 25	equations 0	first left out []
+restrict_a48_univ_live.ndjson	accepted	constants 27	kept 27	equations 0	first left out []
+restrict_a49_imax_field.ndjson	accepted	constants 29	kept 29	equations 0	first left out []
+restrict_a50_neverzero_shapes.ndjson	accepted	constants 35	kept 35	equations 0	first left out []
+restrict_b01_idx_only_bad.ndjson	not accepted
+restrict_b01_idx_only_free.ndjson	accepted	constants 32	kept 32	equations 0	first left out []
+restrict_b02_m2prime_direct_bad.ndjson	not accepted
+restrict_b02_m2prime_direct_free.ndjson	accepted	constants 29	kept 29	equations 0	first left out []
+restrict_big_nest_level_illtyped_large.ndjson	not accepted
+restrict_l9_nest_level_illtyped.ndjson	not accepted
+restrict_l9c1_nest_ctorless_illtyped.ndjson	not accepted
+restrict_l9c2_nest_phantom_illtyped.ndjson	not accepted
+restrict_m2_defeq_levels.ndjson	not accepted
+restrict_m2_mutual_mate.ndjson	not accepted
+restrict_m2_own_levels_ok.ndjson	accepted	constants 26	kept 26	equations 0	first left out []
+rounds_decreasing_id.ndjson	accepted	constants 30	kept 30	equations 0	first left out []
+rounds_error_late.ndjson	not accepted
+rounds_forward_ref.ndjson	not accepted
+rounds_gappy_ids.ndjson	accepted	constants 30	kept 30	equations 0	first left out []
+rounds_huge_gaps.ndjson	accepted	constants 30	kept 30	equations 0	first left out []
+sorry_unused.ndjson	accepted	constants 41	kept 41	equations 3	first left out []
+sorry_use.ndjson	not accepted
+sorry_use_before_invalid.ndjson	not accepted
+sorry_use_midstream.ndjson	not accepted
+spine_arg_order.ndjson	accepted	constants 65	kept 64	equations 8	first left out [s1]	the first because its type has a Nat literal above 256
+std_axioms.ndjson	accepted	constants 34	kept 34	equations 2	first left out []
+stored_rec_outparam.ndjson	accepted	constants 420	kept 414	equations 68	first left out [_private.Init.Prelude.0.Nat.succ_le_succ.match_1_4, _private.Init.Prelude.0.Nat.ble_eq_true_of_le.match_1_4, _private.Init.Prelude.0.Nat.le_trans.match_1_6, _private.Init.Prelude.0.Nat.pred_le_pred.match_1_1, _private.Init.Prelude.0.isValidChar_UInt32.match_1_1]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a ∀ against a ∀
+stored_rule_dom_redex.ndjson	accepted	constants 48	kept 48	equations 2	first left out []
+stored_rule_lams_short.ndjson	not accepted
+stored_type_dom_bad.ndjson	not accepted
+stored_type_dom_redex.ndjson	accepted	constants 48	kept 48	equations 2	first left out []
+str_lit.ndjson	accepted	constants 360	kept 353	equations 56	first left out [_private.Init.Prelude.0.Nat.succ_le_succ.match_1_4, _private.Init.Prelude.0.Nat.ble_eq_true_of_le.match_1_4, _private.Init.Prelude.0.Nat.le_trans.match_1_6, _private.Init.Prelude.0.Nat.pred_le_pred.match_1_1, _private.Init.Prelude.0.isValidChar_UInt32.match_1_1]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a ∀ against a ∀
+str_lit_declined.ndjson	not accepted
+str_proj.ndjson	accepted	constants 365	kept 358	equations 58	first left out [_private.Init.Prelude.0.Nat.succ_le_succ.match_1_4, _private.Init.Prelude.0.Nat.ble_eq_true_of_le.match_1_4, _private.Init.Prelude.0.Nat.le_trans.match_1_6, _private.Init.Prelude.0.Nat.pred_le_pred.match_1_1, _private.Init.Prelude.0.isValidChar_UInt32.match_1_1]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a ∀ against a ∀
+str_proj_declined.ndjson	not accepted
+strict_succ_counter.ndjson	accepted	constants 44	kept 43	equations 3	first left out [t]	the first because its type has a Nat literal above 256
+subject_reduction_redex.ndjson	not accepted
+tolerated_axiom_unused.ndjson	accepted	constants 24	kept 24	equations 0	first left out []
+tolerated_axiom_use.ndjson	not accepted
+tower_axiom.ndjson	not accepted
+tower_axiom_nonstd.ndjson	not accepted
+tower_axiom_pin.ndjson	not accepted
+tower_beqpair.ndjson	accepted		[stopped at the 30-second limit]
+tower_mutual.ndjson	accepted		[stopped at the 30-second limit]
+tower_nested.ndjson	accepted		[stopped at the 30-second limit]
+tower_prelude.ndjson	accepted		[stopped at the 30-second limit]
+tower_proj.ndjson	accepted		[stopped at the 30-second limit]
+tower_quot.ndjson	not accepted
+tower_recfield.ndjson	accepted		[stopped at the 30-second limit]
+tower_struct.ndjson	accepted		[stopped at the 30-second limit]
+tower_thm.ndjson	accepted		[stopped at the 30-second limit]
+tower_usedlater.ndjson	accepted		[stopped at the 30-second limit]
+trust_family.ndjson	accepted	constants 41	kept 41	equations 0	first left out []
+trust_native_use.ndjson	not accepted
+trust_reduce_perturbed.ndjson	not accepted
+uh_let_erase_type.ndjson	not accepted
+uh_let_erase_value.ndjson	not accepted
+uh_nest_key_beta_param.ndjson	not accepted
+uh_nest_key_erase.ndjson	accepted	constants 31	kept 31	equations 0	first left out []
+uh_nest_key_redex.ndjson	accepted	constants 31	kept 31	equations 0	first left out []
+uh_param_domain.ndjson	not accepted
+uh_root_beta_param.ndjson	not accepted
+uh_root_erase_nonunif.ndjson	not accepted
+uh_root_erase_unif.ndjson	accepted	constants 26	kept 26	equations 0	first left out []
+unit_sizeof_rescue.ndjson	accepted	constants 40	kept 39	equations 4	first left out [Unit.sizeOf]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: SizeOf against SizeOf
+unitlike_fieldless.ndjson	accepted	constants 43	kept 43	equations 0	first left out []
+unitlike_lean4_13371.ndjson	accepted	constants 37	kept 36	equations 2	first left out [Hom.noConfusion]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: Hom against Hom
+unitlike_lean4_match4.ndjson	accepted	constants 55	kept 54	equations 3	first left out [Bla.noConfusion]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: Bla against Bla
+unitlike_wide.ndjson	accepted	constants 89	kept 89	equations 9	first left out []
+unitlike_wide_boolwrap_bad.ndjson	not accepted
+unitlike_wide_foo_nat_bad.ndjson	not accepted
+unitlike_wide_pi_bad.ndjson	not accepted
+whnf_core_loop.ndjson		[stopped at the 30-second limit]
+whnf_core_memo.ndjson	accepted	constants 24	kept 23	equations 0	first left out [whnfCoreMemo]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a λ against a λ
+whnf_core_memo_cheap.ndjson	accepted	constants 24	kept 23	equations 0	first left out [whnfCoreMemoCheap]	the first because the inferencer does not type its type at a sort; it stops at an argument whose type does not convert to the domain: a λ against a λ
+whnf_delta_loop.ndjson		[stopped at the 30-second limit]
+wide_dup.ndjson	not accepted
+wide_ok.ndjson	accepted	constants 3023	kept 3023	equations 3000	first left out []
+wide_reject_mid.ndjson	not accepted
+yolo_arg_escape.ndjson	not accepted
+yolo_arg_escape_univs.ndjson	not accepted
+yolo_decline_vs_accept.ndjson	not accepted
+zero_ctor.ndjson	accepted	constants 44	kept 44	equations 2	first left out []
+zero_ctor_bad_rec.ndjson	not accepted
+zero_ctor_false_proof.ndjson	not accepted
