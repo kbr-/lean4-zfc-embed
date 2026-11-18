@@ -84,8 +84,8 @@ the inversion of sorts and two more lemmas as `sorry`, and the proof of unique t
   acceptance. The inferencer, `infer` (`Lean4Zfc/Convert.lean`), is proved sound for every amount of
   fuel (`infer_sound`). Where it expects a sort or a function type it converts the inferred type,
   unfolding constants by the stored unfoldings and contracting redexes; each step is one rule of the
-  judgement applied to types it has itself inferred and compared syntactically, so it uses no
-  inversion lemma and no unique typing.
+  judgement applied to types it has itself inferred and compared syntactically or, for two sorts, by
+  the values of their levels, so it uses no inversion lemma and no unique typing.
 
 **From inaccessible cardinals** (`inaccessibles/Lean4ZfcInaccessibles.lean`). The hypothesis is the
 one of the `consistency` statement in lean4lean-model, a strictly increasing sequence of
@@ -190,14 +190,16 @@ Lake does not track the example's data files: after changing one, change
   exports made to be rejected. On 328 of the accepted the generator finished, and of the 20764
   constants of those environments, each count including the prelude's, it kept 20544, keeping 253
   environments whole and storing 4870 equations; the totals are sums over the lines `reach` prints.
-  On the other ten, among them `tower_beqpair`, which Con-Leche's own binary accepts at once, the
-  generator did not finish within thirty seconds; how long it takes there was not measured. The
-  totals are those of this limit on the machine used, where the slowest file that finished took
-  about eleven seconds alone under load; a machine that finishes one of the ten within the limit
-  prints other totals. The generated environment holds an equation only where a constant of the
-  accepted environment has it as its type, `@Eq T a b`, or where it unfolds a kept definition whose
-  value `infer` types at the definition's type: a recursor's computation rule is not added. Whether
-  Con-Leche's checker and Lean4Lean's theory accept the same environments is not addressed.
+  That run is saved as `measurements/con-leche-e2e.tsv`, and `Lean4ZfcTest/Measured.lean` fails the
+  build when its totals are not these; Lake does not track that file, so after replacing it change
+  `Measured.lean` too, or the build keeps the check of the old one. On the other ten, among them
+  `tower_beqpair`, the generator did not finish within thirty seconds; how long it takes there was
+  not measured. The totals are those of this limit on the machine used; a machine that finishes one
+  of the ten within the limit prints other totals. The generated environment holds an
+  equation only where a constant of the accepted environment has it as its type, `@Eq T a b`, or
+  where it unfolds a kept definition whose value `infer` types at the definition's type: a
+  recursor's computation rule is not added. Whether Con-Leche's checker and Lean4Lean's theory
+  accept the same environments is not addressed.
 - **The result is a Lean theorem with a hypothesis.** `OmegaInaccessibles` is assumed, over
   Mathlib's `ZFSet`. No theorem of first-order set theory about an encoding of the type theory is
   derived from it.
@@ -224,14 +226,16 @@ Lake does not track the example's data files: after changing one, change
 | `Lean4Zfc/Example/` | The example, certified by hand and by the generator, and its data |
 | `Lean4Zfc/Tally.lean` | The totals of a saved measurement; `tally_partition`: its kinds of line add up to the lines that are not blank |
 | `Reach.lean` | `lake exe reach FILE...`: how many constants of each export the generator keeps, and where `infer` stops on the first constant left out; `--measure DIR SECONDS JOBS` runs it on a directory, `--summary FILE` totals a saved run |
-| `Lean4ZfcTest/` | The axioms of each theorem, pinned: a `sorry` reaching one fails the build; the rejected false export; `badEnv_wf`; the tally and the level check on worked examples |
+| `Lean4ZfcTest/` | The axioms of the general theorems and the generator's, pinned in `Axioms.lean` and `Generated.lean`: a `sorry` reaching one fails the build; the rejected false export; `badEnv_wf`; the tally and the level check on worked examples; the saved measurement's totals |
+| `measurements/` | The saved output of `reach --measure` over Con-Leche's export fixtures |
 | `inaccessibles/` | A Lake package of its own, the only part that needs Mathlib: the theorems above |
 | `patches/` | The changes that build Lean4Lean's theory at Lean v4.35.0 |
 
 ## Building
 
-Both packages require their dependencies by path from sibling checkouts, so that existing builds are
-reused. Beside this repository, in `../lean4-zfc-sources/`:
+Both packages require Lean4Lean and Con-Leche by path from sibling checkouts, so that existing
+builds are reused; the second also requires Mathlib from its repository. Beside this repository, in
+`../lean4-zfc-sources/`:
 
 - `con-leche`: [Con-Leche](https://github.com/leanprover/con-leche) at
   `d88e04e9b25ca48e5f9f90c07f2493fbc2b489e8`, which pins Lean v4.35.0.
@@ -240,7 +244,8 @@ reused. Beside this repository, in `../lean4-zfc-sources/`:
   (`git apply`). Upstream pins Lean v4.33.0-rc2; the patch changes the toolchain file, requires
   Batteries by path, and removes one rewrite that no longer applies.
 - `batteries-435`: [Batteries](https://github.com/leanprover-community/batteries) at its tag
-  `v4.35.0`.
+  `v4.35.0`, for the first package. The second package takes Batteries from Mathlib's pin, the same
+  commit.
 
 Then, with Lean v4.35.0 installed through Elan:
 
