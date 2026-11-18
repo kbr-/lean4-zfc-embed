@@ -14,6 +14,9 @@ domain when `conv` relates its type to the domain: the two are equal, one steps 
 (`forallEDF`), or both are sorts at levels of equal value (`sortDF`, by `Lean4Zfc/Level.lean`). No
 inversion lemma and no unique typing is used.
 
+Types are compared syntactically, two sorts by the values of their levels. No bound on the cost is
+proved or stated: conversion infers the types of the terms it steps to, again at each step.
+
 Conversion calls inference on terms that are not subterms, so everything runs on fuel.
 `infer_sound` holds for every fuel: a result is a typing in the judgement, given that the
 equations in `eqs` are stored in the environment.

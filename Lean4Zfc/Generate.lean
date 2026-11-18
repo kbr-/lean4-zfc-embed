@@ -16,6 +16,10 @@ type, is every later constant that mentions something left out.
 `generated_consistent` needs only the checker's acceptance. The generated environment holds an
 equation only where one of the checker's constants has it as its type or it unfolds a stored
 definition: no recursor rule is added.
+
+No bound on the generator's cost is proved or stated. It runs the inferencer of
+`Lean4Zfc/Convert.lean` on each constant's type, on both sides of each equation and on each
+definition's value, at the fuel `fuel`.
 -/
 
 namespace Lean4Zfc
