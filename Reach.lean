@@ -50,8 +50,9 @@ def headName : Lean4Lean.VExpr → String
   | .bvar _ => "a bound variable"
 
 /-- Where `infer` gives up on `e` in the context `Γ`: the innermost subterm it fails on, read by
-the cases of `infer`, the class of failure first. It reads `infer`'s results and decides nothing
-the theorems state. -/
+the cases of `infer`, the class of failure first. It reads `infer`'s results at the generator's
+fuel, so on a term too deep for that fuel it names the case in which the fuel ran out, which need
+not be a failure of typing. It decides nothing the theorems state. -/
 def stuck (env : Lean4Lean.VEnv) (eqs : List Lean4Lean.VDefEq) (U : Nat)
     (Γ : List Lean4Lean.VExpr) : Lean4Lean.VExpr → String
   | .bvar _ => "a bound variable outside its context"
@@ -158,8 +159,10 @@ def measureDir (dir : System.FilePath) (secs jobs : Nat) : IO Unit := do
 generator starts, so a run that does not finish shows the file and the side it stopped on. -/
 def main (args : List String) : IO Unit := do
   let out ← IO.getStdout
-  if let ["--summary", file] := args then
-    out.putStrLn (tally (← IO.FS.readFile file)).render
+  if let "--summary" :: rest := args then
+    match rest with
+    | [file] => out.putStrLn (tally (← IO.FS.readFile file)).render
+    | _ => throw <| IO.userError "usage: reach --summary FILE"
     return
   if let "--measure" :: rest := args then
     match rest with
@@ -170,6 +173,9 @@ def main (args : List String) : IO Unit := do
         throw <| IO.userError "usage: reach --measure DIR SECONDS JOBS, each a number at least 1"
     | _ => throw <| IO.userError "usage: reach --measure DIR SECONDS JOBS"
     return
+  if args.isEmpty || args.any (·.startsWith "--") then
+    throw <| IO.userError
+      "usage: reach FILE... | reach --measure DIR SECONDS JOBS | reach --summary FILE"
   for path in args do
     out.putStr s!"{path}\t"
     out.flush
